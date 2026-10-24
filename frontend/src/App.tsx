@@ -1,0 +1,187 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { Header } from './components/Header';
+import { KpiBentoStrip } from './components/KpiBentoStrip';
+import { TradingViewTab } from './components/tabs/TradingViewTab';
+import { RiskAnalyticsTab } from './components/tabs/RiskAnalyticsTab';
+import { SimulatorTab } from './components/tabs/SimulatorTab';
+import {
+  getHealth,
+  getHorizonAccuracy,
+  getSummary,
+  getTimeseries,
+} from './services/api';
+import {
+  HealthResponse,
+  HorizonAccuracyResponse,
+  SummaryResponse,
+  TimeSeriesResponse,
+} from './types/api';
+import { AlertCircle, RefreshCw } from 'lucide-react';
+
+export const App: React.FC = () => {
+  // Global Filters State
+  const [startDate, setStartDate] = useState<string>('2026-01-01');
+  const [endDate, setEndDate] = useState<string>('2026-01-31');
+  const [cutoffHour, setCutoffHour] = useState<number>(11);
+  const [interpolation, setInterpolation] = useState<'step' | 'linear'>('step');
+  const [activeTab, setActiveTab] = useState<'trading' | 'analytics' | 'simulator'>('trading');
+
+  // API Data State
+  const [summaryData, setSummaryData] = useState<SummaryResponse | null>(null);
+  const [timeseriesData, setTimeseriesData] = useState<TimeSeriesResponse | null>(null);
+  const [horizonData, setHorizonData] = useState<HorizonAccuracyResponse | null>(null);
+  const [healthData, setHealthData] = useState<HealthResponse | null>(null);
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Check health on load
+  useEffect(() => {
+    getHealth()
+      .then((h) => setHealthData(h))
+      .catch((e) => console.warn('Health check warning:', e));
+  }, []);
+
+  // Fetch data on filter change
+  const loadDashboardData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [sumRes, tsRes, horRes] = await Promise.all([
+        getSummary({
+          start_date: startDate,
+          end_date: endDate,
+          cutoff_hour: cutoffHour,
+          interpolation,
+        }),
+        getTimeseries({
+          start_date: startDate,
+          end_date: endDate,
+          cutoff_hour: cutoffHour,
+          interpolation,
+        }),
+        getHorizonAccuracy({
+          cutoff_hour: cutoffHour,
+          start_date: startDate,
+          end_date: endDate,
+          interpolation,
+        }),
+      ]);
+
+      setSummaryData(sumRes);
+      setTimeseriesData(tsRes);
+      setHorizonData(horRes);
+    } catch (err: any) {
+      console.error('Failed to load dashboard data:', err);
+      setError(err?.message || 'Failed to connect to backend API server on port 8000.');
+    } finally {
+      setLoading(false);
+    }
+  }, [startDate, endDate, cutoffHour, interpolation]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
+
+  return (
+    <div className="min-h-screen bg-[#09090B] text-zinc-100 flex flex-col font-sans selection:bg-zinc-800 selection:text-white">
+      {/* 2-Tier Header */}
+      <Header
+        startDate={startDate}
+        endDate={endDate}
+        cutoffHour={cutoffHour}
+        interpolation={interpolation}
+        activeTab={activeTab}
+        isHealthy={healthData?.status === 'healthy'}
+        onStartDateChange={setStartDate}
+        onEndDateChange={setEndDate}
+        onCutoffHourChange={setCutoffHour}
+        onInterpolationChange={setInterpolation}
+        onTabChange={setActiveTab}
+      />
+
+      {/* Main Workspace Container */}
+      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 lg:px-6 py-5 space-y-4">
+        {/* Error Banner */}
+        {error && (
+          <div className="bg-rose-950/60 border border-rose-800 text-rose-200 p-3.5 rounded flex items-center justify-between text-xs font-mono">
+            <div className="flex items-center gap-2.5">
+              <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+              <span>{error}</span>
+            </div>
+            <button
+              onClick={loadDashboardData}
+              className="px-2.5 py-1 bg-rose-900/60 hover:bg-rose-800 border border-rose-700 rounded text-xs flex items-center gap-1 transition-all"
+            >
+              <RefreshCw className="w-3 h-3" />
+              RETRY
+            </button>
+          </div>
+        )}
+
+        {/* Executive Hairline KPI Bento Strip */}
+        <KpiBentoStrip
+          kpi={summaryData?.kpi || null}
+          cutoffHour={cutoffHour}
+        />
+
+        {/* Active Tab Workspace */}
+        {loading && !timeseriesData ? (
+          <div className="bg-[#111113] border border-zinc-800 p-20 rounded-md flex flex-col items-center justify-center gap-3 text-zinc-500 font-mono text-xs">
+            <RefreshCw className="w-6 h-6 text-zinc-400 animate-spin" />
+            <div>COMPUTING DAY-AHEAD D-1 TIME-SERIES ALIGNMENT...</div>
+            <div className="text-[10px] text-zinc-600">QUERYING ELEXON BMRS DATASET ENGINE</div>
+          </div>
+        ) : (
+          <div>
+            {activeTab === 'trading' && timeseriesData && (
+              <TradingViewTab
+                timeseries={timeseriesData.timeseries}
+                p95Buffer={timeseriesData.p95_shortfall_mw}
+                cutoffHour={cutoffHour}
+              />
+            )}
+
+            {activeTab === 'analytics' && summaryData && horizonData && (
+              <RiskAnalyticsTab
+                histogram={summaryData.histogram}
+                daily={summaryData.daily}
+                horizonDegradation={horizonData.horizon_degradation}
+                diurnalProfile={horizonData.diurnal_profile}
+                kpi={summaryData.kpi}
+              />
+            )}
+
+            {activeTab === 'simulator' && timeseriesData && (
+              <SimulatorTab
+                timeseries={timeseriesData.timeseries}
+                kpi={summaryData?.kpi || null}
+                cutoffHour={cutoffHour}
+              />
+            )}
+          </div>
+        )}
+      </main>
+
+      {/* Terminal Footer */}
+      <footer className="border-t border-zinc-800/80 bg-[#09090B] py-3 text-[11px] font-mono text-zinc-500 mt-auto">
+        <div className="max-w-[1400px] mx-auto px-4 lg:px-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-zinc-400">GRIDPULSE // UK-BM</span>
+            <span>•</span>
+            <span>DAY-AHEAD WHOLESALE MARKET PROCUREMENT INTELLIGENCE</span>
+            <span>•</span>
+            <span className="text-zinc-400">1,488 SETTLEMENT INTERVALS</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span>SOURCE: ELEXON BMRS (FUELHH WIND & WINDFOR)</span>
+            <span>•</span>
+            <span>SCOPE: JANUARY 2026</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
