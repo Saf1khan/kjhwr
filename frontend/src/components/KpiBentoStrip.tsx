@@ -9,9 +9,9 @@ interface KpiBentoStripProps {
 export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi }) => {
   if (!kpi) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-[1px] bg-zinc-800/80 border border-zinc-800/80 rounded-md overflow-hidden animate-pulse">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-28 bg-[#111113] p-4" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-[1px] bg-zinc-800/80 border border-zinc-800/80 rounded-md overflow-hidden animate-pulse">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-28 bg-[#111113] p-5" />
         ))}
       </div>
     );
@@ -20,129 +20,77 @@ export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi }) => {
   const netDeficitGwh = Number((kpi.total_forecast_gwh - kpi.total_actual_gwh).toFixed(1));
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-[1px] bg-zinc-800/80 border border-zinc-800/80 rounded-md overflow-hidden shadow-sm">
-      {/* 1. Day-Ahead MAE */}
-      <div className="bg-[#111113] hover:bg-[#151518] p-4 transition-colors flex flex-col justify-between">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-[1px] bg-zinc-800/80 border border-zinc-800/80 rounded-md overflow-hidden shadow-sm">
+      {/* 1. Forecast Error (MAE) */}
+      <div className="bg-[#111113] hover:bg-[#151518] p-5 transition-colors flex flex-col justify-between">
         <div>
-          <div className="text-[11px] font-mono tracking-wider text-zinc-500 uppercase font-medium">
-            DAY-AHEAD MAE
+          <div className="text-xs font-sans text-zinc-400 font-medium">
+            Forecast Error (MAE)
           </div>
-          <div className="mt-1 flex items-baseline">
-            <span className="font-mono text-2xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums">
+          <div className="mt-2 flex items-baseline">
+            <span className="font-mono text-2xl lg:text-3xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums">
               {kpi.mae_mw.toLocaleString()}
             </span>
             <span className="text-xs text-zinc-500 font-normal ml-1.5">MW</span>
           </div>
         </div>
-
-        <div className="mt-3 pt-2 border-t border-zinc-800/60 flex items-center justify-between text-[11px] font-mono">
-          <span className="text-zinc-500">INTRADAY:</span>
-          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
-            -{kpi.forecast_improvement_mw} MW
-          </span>
+        <div className="mt-3 text-xs text-zinc-400 font-sans">
+          {kpi.wape_percent.toFixed(1)}% WAPE · {kpi.latest_mae_mw.toLocaleString()} MW intraday
         </div>
       </div>
 
-      {/* 2. Systematic Bias (MBE) */}
-      <div className="bg-[#111113] hover:bg-[#151518] p-4 transition-colors flex flex-col justify-between">
+      {/* 2. Forecast Bias */}
+      <div className="bg-[#111113] hover:bg-[#151518] p-5 transition-colors flex flex-col justify-between">
         <div>
-          <div className="text-[11px] font-mono tracking-wider text-zinc-500 uppercase font-medium">
-            SYSTEMATIC BIAS (MBE)
+          <div className="text-xs font-sans text-zinc-400 font-medium">
+            Forecast Bias
           </div>
-          <div className="mt-1 flex items-baseline">
-            <span className="font-mono text-2xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums">
+          <div className="mt-2 flex items-baseline">
+            <span className="font-mono text-2xl lg:text-3xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums">
               +{kpi.mbe_mw.toLocaleString()}
             </span>
             <span className="text-xs text-zinc-500 font-normal ml-1.5">MW</span>
           </div>
         </div>
-
-        <div className="mt-3 pt-2 border-t border-zinc-800/60 flex items-center justify-between text-[11px] font-mono">
-          <span className="text-zinc-500">DIRECTION:</span>
-          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium">
-            OVER-FORECAST
-          </span>
+        <div className="mt-3 text-xs text-zinc-400 font-sans flex items-center">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block mr-1.5 flex-shrink-0" />
+          <span>Consistent over-forecast</span>
         </div>
       </div>
 
-      {/* 3. WAPE & RMSE */}
-      <div className="bg-[#111113] hover:bg-[#151518] p-4 transition-colors flex flex-col justify-between">
+      {/* 3. P95 Thermal Buffer */}
+      <div className="bg-[#111113] hover:bg-[#151518] p-5 transition-colors flex flex-col justify-between">
         <div>
-          <div className="text-[11px] font-mono tracking-wider text-zinc-500 uppercase font-medium">
-            CAPACITY ERROR (WAPE)
+          <div className="text-xs font-sans text-zinc-400 font-medium">
+            P95 Thermal Buffer
           </div>
-          <div className="mt-1 flex items-baseline">
-            <span className="font-mono text-2xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums">
-              {kpi.wape_percent.toFixed(2)}%
-            </span>
-          </div>
-        </div>
-
-        <div className="mt-3 pt-2 border-t border-zinc-800/60 flex items-center justify-between text-[11px] font-mono">
-          <span className="text-zinc-500">RMSE:</span>
-          <span className="text-zinc-300 font-medium">{kpi.rmse_mw.toLocaleString()} MW</span>
-        </div>
-      </div>
-
-      {/* 4. Recommended Thermal Buffer (P95 Shortfall) */}
-      <div className="bg-[#111113] hover:bg-[#151518] p-4 transition-colors flex flex-col justify-between">
-        <div>
-          <div className="text-[11px] font-mono tracking-wider text-zinc-500 uppercase font-medium">
-            P95 THERMAL BUFFER
-          </div>
-          <div className="mt-1 flex items-baseline">
-            <span className="font-mono text-2xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums">
+          <div className="mt-2 flex items-baseline">
+            <span className="font-mono text-2xl lg:text-3xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums">
               {kpi.p95_shortfall_mw.toLocaleString()}
             </span>
             <span className="text-xs text-zinc-500 font-normal ml-1.5">MW</span>
           </div>
         </div>
-
-        <div className="mt-3 pt-2 border-t border-zinc-800/60 flex items-center justify-between text-[11px] font-mono">
-          <span className="text-zinc-500">P90 BUFFER:</span>
-          <span className="text-zinc-400">{kpi.p90_shortfall_mw.toLocaleString()} MW</span>
+        <div className="mt-3 text-xs text-zinc-400 font-sans">
+          P90: {kpi.p90_shortfall_mw.toLocaleString()} MW · Max miss: {kpi.max_shortfall_mw.toLocaleString()} MW
         </div>
       </div>
 
-      {/* 5. Peak Single-Period Deficit */}
-      <div className="bg-[#111113] hover:bg-[#151518] p-4 transition-colors flex flex-col justify-between">
+      {/* 4. Monthly Volume (Jan 2026) */}
+      <div className="bg-[#111113] hover:bg-[#151518] p-5 transition-colors flex flex-col justify-between">
         <div>
-          <div className="text-[11px] font-mono tracking-wider text-zinc-500 uppercase font-medium">
-            PEAK DEFICIT SPIKE
+          <div className="text-xs font-sans text-zinc-400 font-medium">
+            Monthly Volume (Jan 2026)
           </div>
-          <div className="mt-1 flex items-baseline">
-            <span className="font-mono text-2xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums">
-              {kpi.max_shortfall_mw.toLocaleString()}
-            </span>
-            <span className="text-xs text-zinc-500 font-normal ml-1.5">MW</span>
-          </div>
-        </div>
-
-        <div className="mt-3 pt-2 border-t border-zinc-800/60 flex items-center justify-between text-[11px] font-mono">
-          <span className="text-zinc-500">TAIL EVENT:</span>
-          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 font-medium">
-            MAX 30-MIN MISS
-          </span>
-        </div>
-      </div>
-
-      {/* 6. Net Monthly Energy Imbalance */}
-      <div className="bg-[#111113] hover:bg-[#151518] p-4 transition-colors flex flex-col justify-between">
-        <div>
-          <div className="text-[11px] font-mono tracking-wider text-zinc-500 uppercase font-medium">
-            NET WIND IMBALANCE
-          </div>
-          <div className="mt-1 flex items-baseline">
-            <span className="font-mono text-2xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums">
-              -{netDeficitGwh.toLocaleString()}
+          <div className="mt-2 flex items-baseline">
+            <span className="font-mono text-2xl lg:text-3xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums">
+              {kpi.total_actual_gwh.toLocaleString()}
             </span>
             <span className="text-xs text-zinc-500 font-normal ml-1.5">GWh</span>
           </div>
         </div>
-
-        <div className="mt-3 pt-2 border-t border-zinc-800/60 flex items-center justify-between text-[11px] font-mono">
-          <span className="text-zinc-500">ACTUAL:</span>
-          <span className="text-zinc-300 font-medium">{kpi.total_actual_gwh.toLocaleString()} GWh</span>
+        <div className="mt-3 text-xs text-zinc-400 font-sans">
+          Forecast: {kpi.total_forecast_gwh.toLocaleString()} GWh (-{netDeficitGwh.toLocaleString()} GWh gap)
         </div>
       </div>
     </div>

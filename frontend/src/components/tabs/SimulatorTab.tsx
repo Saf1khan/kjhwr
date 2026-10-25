@@ -101,18 +101,18 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
     <div className="space-y-4">
       {/* Top Configuration Bar */}
       <div className="bg-[#111113] border border-zinc-800/80 rounded-md p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800/80 pb-3 font-mono">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800/80 pb-3">
           <div>
-            <h2 className="text-xs font-bold text-zinc-100 uppercase tracking-wider">
-              DAY-AHEAD THERMAL PROCUREMENT CALCULATOR // DECISION MATRIX
+            <h2 className="text-sm font-semibold text-zinc-100 font-sans tracking-normal">
+              Day-Ahead Thermal Procurement Simulator
             </h2>
-            <p className="text-[11px] text-zinc-500 font-sans mt-0.5">
-              Simulate procurement commitments on Day D-1 before {cutoffHour}:00 UTC gate closure against physical settlement outturn.
+            <p className="text-xs text-zinc-500 font-sans mt-0.5">
+              Simulate procurement commitments on Day D-1 before {cutoffHour}:00 UTC gate closure against physical settlement outturn
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-zinc-500">DELIVERY DATE (D):</span>
+          <div className="flex items-center gap-2 text-xs font-sans">
+            <span className="text-zinc-400">Delivery Date (D):</span>
             <select
               value={targetDate}
               onChange={(e) => setTargetDate(e.target.value)}
@@ -130,10 +130,10 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
         {/* Parameter Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Demand Slider */}
-          <div className="bg-[#151518] p-3.5 rounded border border-zinc-800/80 space-y-2 font-mono">
+          <div className="bg-[#151518] p-3.5 rounded border border-zinc-800/80 space-y-2">
             <div className="flex justify-between items-center text-xs">
-              <span className="text-zinc-400">TOTAL DEMAND:</span>
-              <span className="text-zinc-100 font-bold tabular-nums">{demandMw.toLocaleString()} MW</span>
+              <span className="text-zinc-400 font-sans">Total Demand:</span>
+              <span className="text-zinc-100 font-bold tabular-nums font-mono">{demandMw.toLocaleString()} MW</span>
             </div>
             <input
               type="range"
@@ -144,7 +144,7 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
               onChange={(e) => setDemandMw(Number(e.target.value))}
               className="w-full accent-zinc-200 cursor-pointer h-1 bg-zinc-800 rounded"
             />
-            <div className="flex justify-between text-[10px] text-zinc-600">
+            <div className="flex justify-between text-[10px] text-zinc-600 font-mono">
               <span>15 GW</span>
               <span>35 GW</span>
               <span>50 GW</span>
@@ -152,92 +152,92 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
           </div>
 
           {/* Risk Policy Selector */}
-          <div className="bg-[#151518] p-3.5 rounded border border-zinc-800/80 md:col-span-2 space-y-2 font-mono">
-            <div className="text-xs text-zinc-400">
-              RISK APPETITE & THERMAL BUFFER POLICY:
+          <div className="bg-[#151518] p-3.5 rounded border border-zinc-800/80 md:col-span-2 space-y-2">
+            <div className="text-xs text-zinc-400 font-sans">
+              Risk Appetite & Thermal Buffer Policy:
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <button
                 onClick={() => setRiskPolicy('naive')}
-                className={`p-2 rounded border text-left transition-all ${
+                className={`p-2.5 rounded border text-left transition-all ${
                   riskPolicy === 'naive'
                     ? 'bg-zinc-800 border-zinc-500 text-white shadow-sm'
                     : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
                 }`}
               >
-                <div className="text-[11px] font-bold">1. NAIVE</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">Trust Raw Wind (0 MW)</div>
+                <div className="text-xs font-semibold font-sans">Naive Forecast</div>
+                <div className="text-[11px] text-zinc-500 font-sans mt-0.5">Trust raw wind · 0 MW</div>
               </button>
 
               <button
                 onClick={() => setRiskPolicy('bias')}
-                className={`p-2 rounded border text-left transition-all ${
+                className={`p-2.5 rounded border text-left transition-all ${
                   riskPolicy === 'bias'
                     ? 'bg-zinc-800 border-zinc-500 text-white shadow-sm'
                     : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
                 }`}
               >
-                <div className="text-[11px] font-bold">2. BIAS-CORRECTED</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">Subtract MBE (+{kpi?.mbe_mw || 1840} MW)</div>
+                <div className="text-xs font-semibold font-sans">Bias-Adjusted</div>
+                <div className="text-[11px] text-zinc-500 font-sans mt-0.5">Subtract MBE · -{kpi?.mbe_mw || 1840} MW</div>
               </button>
 
               <button
                 onClick={() => setRiskPolicy('p90')}
-                className={`p-2 rounded border text-left transition-all ${
+                className={`p-2.5 rounded border text-left transition-all ${
                   riskPolicy === 'p90'
                     ? 'bg-zinc-800 border-zinc-500 text-white shadow-sm'
                     : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
                 }`}
               >
-                <div className="text-[11px] font-bold">3. P90 SAFETY</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">+{kpi?.p90_shortfall_mw || 4347} MW buffer</div>
+                <div className="text-xs font-semibold font-sans">P90 Buffer</div>
+                <div className="text-[11px] text-zinc-500 font-sans mt-0.5">+{kpi?.p90_shortfall_mw || 4347} MW buffer</div>
               </button>
 
               <button
                 onClick={() => setRiskPolicy('p95')}
-                className={`p-2 rounded border text-left transition-all ${
+                className={`p-2.5 rounded border text-left transition-all ${
                   riskPolicy === 'p95'
                     ? 'bg-zinc-800 border-zinc-500 text-white shadow-sm'
                     : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
                 }`}
               >
-                <div className="text-[11px] font-bold text-sky-400">4. INSTITUTIONAL P95</div>
-                <div className="text-[10px] text-zinc-400 mt-0.5">+{kpi?.p95_shortfall_mw || 5378} MW buffer</div>
+                <div className="text-xs font-semibold font-sans text-sky-400">P95 Buffer (Recommended)</div>
+                <div className="text-[11px] text-zinc-400 font-sans mt-0.5">+{kpi?.p95_shortfall_mw || 5378} MW buffer</div>
               </button>
             </div>
           </div>
         </div>
 
         {/* Outcome Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-zinc-800/80 border border-zinc-800/80 rounded overflow-hidden font-mono text-xs">
-          <div className="bg-[#111113] p-3">
-            <span className="text-[10px] text-zinc-500 uppercase">AVG WIND FORECAST</span>
-            <div className="text-lg font-bold text-zinc-200 tabular-nums mt-0.5">
-              {avgWindForecast.toLocaleString()} <span className="text-xs text-zinc-500 font-normal">MW</span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-zinc-800/80 border border-zinc-800/80 rounded overflow-hidden">
+          <div className="bg-[#111113] p-3.5">
+            <span className="text-xs text-zinc-400 font-sans">Avg Wind Forecast</span>
+            <div className="text-lg font-bold text-[#FAFAFA] font-mono tabular-nums mt-0.5">
+              {avgWindForecast.toLocaleString()} <span className="text-xs text-zinc-400 font-normal">MW</span>
             </div>
           </div>
 
-          <div className="bg-[#111113] p-3">
-            <span className="text-[10px] text-zinc-500 uppercase">THERMAL BUFFER APPLIED</span>
-            <div className="text-lg font-bold text-amber-300 tabular-nums mt-0.5">
-              +{policyBuffer.toLocaleString()} <span className="text-xs text-zinc-500 font-normal">MW</span>
+          <div className="bg-[#111113] p-3.5">
+            <span className="text-xs text-zinc-400 font-sans">Thermal Buffer</span>
+            <div className="text-lg font-bold text-[#FAFAFA] font-mono tabular-nums mt-0.5">
+              +{policyBuffer.toLocaleString()} <span className="text-xs text-zinc-400 font-normal">MW</span>
             </div>
           </div>
 
-          <div className="bg-[#111113] p-3">
-            <span className="text-[10px] text-zinc-500 uppercase">REQUIRED DA THERMAL</span>
-            <div className="text-lg font-bold text-zinc-100 tabular-nums mt-0.5">
-              {avgThermalProcured.toLocaleString()} <span className="text-xs text-zinc-500 font-normal">MW</span>
+          <div className="bg-[#111113] p-3.5">
+            <span className="text-xs text-zinc-400 font-sans">Required Thermal</span>
+            <div className="text-lg font-bold text-[#FAFAFA] font-mono tabular-nums mt-0.5">
+              {avgThermalProcured.toLocaleString()} <span className="text-xs text-zinc-400 font-normal">MW</span>
             </div>
           </div>
 
-          <div className="bg-[#111113] p-3 flex flex-col justify-between">
-            <span className="text-[10px] text-zinc-500 uppercase">PERIODS PROTECTED</span>
+          <div className="bg-[#111113] p-3.5 flex flex-col justify-between">
+            <span className="text-xs text-zinc-400 font-sans">Periods Protected</span>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className={`text-lg font-bold tabular-nums ${protectionPercent >= 90 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <span className="text-lg font-bold text-[#FAFAFA] font-mono tabular-nums">
                 {protectionPercent}%
               </span>
-              <span className="text-[10px] text-zinc-500">
+              <span className="text-xs text-zinc-400 font-sans">
                 ({protectedCount}/{simulationData.length} SPs)
               </span>
             </div>
@@ -247,12 +247,12 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
 
       {/* Dispatch Timeline Chart */}
       <div className="bg-[#111113] border border-zinc-800/80 rounded-md overflow-hidden">
-        <div className="h-10 px-4 border-b border-zinc-800/80 flex items-center justify-between text-xs font-mono">
-          <span className="font-semibold text-zinc-200 uppercase tracking-wide">
-            DISPATCH BALANCE TIMELINE // DELIVERY DAY {targetDate}
+        <div className="h-10 px-4 border-b border-zinc-800/80 flex items-center justify-between">
+          <span className="font-sans font-medium text-sm text-zinc-100 tracking-normal">
+            Dispatch Balance Timeline
           </span>
-          <span className="text-[11px] text-zinc-400">
-            POLICY: <strong className="text-sky-400">{riskPolicy.toUpperCase()}</strong> (+{policyBuffer} MW)
+          <span className="text-xs text-zinc-400 font-sans">
+            Delivery Day {targetDate} · Policy: <strong className="text-zinc-200">{riskPolicy.toUpperCase()}</strong> (+{policyBuffer} MW)
           </span>
         </div>
 
@@ -270,7 +270,7 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                   fontSize={10}
                   tickLine={false}
                   fontFamily="JetBrains Mono"
-                  label={{ value: 'Settlement Period (1 to 48)', position: 'insideBottom', offset: -10, fill: '#71717A', fontSize: 10 }}
+                  label={{ value: 'Settlement Period (1 to 48)', position: 'insideBottom', offset: -10, fill: '#71717A', fontSize: 10, fontFamily: 'Inter, sans-serif' }}
                 />
                 <YAxis
                   stroke="#52525B"
@@ -285,7 +285,7 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                     const d = payload[0].payload;
                     return (
                       <div className="bg-[#111113] border border-zinc-700/80 p-3 rounded shadow-xl text-xs font-mono space-y-1">
-                        <div className="text-zinc-200 font-semibold border-b border-zinc-800 pb-1">
+                        <div className="text-zinc-200 font-semibold font-sans border-b border-zinc-800 pb-1">
                           {d.settlementDate} • SP {d.settlementPeriod} ({d.startTime?.split('T')[1]?.substring(0, 5)} UTC)
                         </div>
                         <div className="text-zinc-400">Demand: {d.demand_mw.toLocaleString()} MW</div>
@@ -299,7 +299,7 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                     );
                   }}
                 />
-                <Legend verticalAlign="top" height={28} wrapperStyle={{ fontSize: '11px', fontFamily: 'JetBrains Mono' }} />
+                <Legend verticalAlign="top" height={28} wrapperStyle={{ fontSize: '11px', fontFamily: 'Inter, sans-serif' }} />
 
                 <ReferenceLine
                   y={demandMw}
@@ -344,34 +344,9 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
         </div>
       </div>
 
-      {/* Commercial Pitch & Methodology Card */}
-      <div className="bg-[#111113] border border-zinc-800/80 rounded-md p-5 space-y-3 font-mono text-xs">
-        <div className="font-semibold text-zinc-200 uppercase tracking-wide">
-          WHOLESALE PROCUREMENT METHODOLOGY & TRADING DESK VALUE PROPOSITION
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 font-sans text-xs">
-          <div className="bg-[#151518] p-3.5 rounded border border-zinc-800/80 space-y-1">
-            <span className="font-semibold text-zinc-200 font-mono text-[11px] block">01 // D-1 AUCTION ALIGNMENT</span>
-            <p className="text-zinc-400 text-[11px] leading-relaxed">
-              UK wholesale power auctions gate-close on Day D-1 (11:00 UTC). Our engine selects the latest National Grid ESO forecast with <code className="text-zinc-300 font-mono">publishTime &le; D-1 11:00 UTC</code> to prevent look-ahead bias.
-            </p>
-          </div>
-
-          <div className="bg-[#151518] p-3.5 rounded border border-zinc-800/80 space-y-1">
-            <span className="font-semibold text-zinc-200 font-mono text-[11px] block">02 // EMPIRICAL BIAS DETECTION</span>
-            <p className="text-zinc-400 text-[11px] leading-relaxed">
-              Across 1,488 settlement periods in January 2026, ESO forecasts exhibited a systematic <strong className="text-amber-300 font-mono">+1,840 MW over-forecast bias</strong>. Naive procurement resulted in severe balancing market exposure.
-            </p>
-          </div>
-
-          <div className="bg-[#151518] p-3.5 rounded border border-zinc-800/80 space-y-1">
-            <span className="font-semibold text-zinc-200 font-mono text-[11px] block">03 // P95 THERMAL HEDGE</span>
-            <p className="text-zinc-400 text-[11px] leading-relaxed">
-              By sizing thermal procurement with the quantified <strong className="text-rose-400 font-mono">P95 shortfall buffer (5,378 MW)</strong>, the desk guarantees 95% protection against emergency cash-out penalty charges.
-            </p>
-          </div>
-        </div>
+      {/* Methodology Compact Footer Note */}
+      <div className="text-center py-2 text-xs text-zinc-500 font-sans">
+        D-1 11:00 UTC auction cutoff · Calibrated on 1,488 settlement periods (Jan 2026) · P95 hedge protects against balancing mechanism cash-out penalties
       </div>
     </div>
   );

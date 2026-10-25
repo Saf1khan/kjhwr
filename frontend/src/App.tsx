@@ -127,10 +127,10 @@ export const App: React.FC = () => {
 
         {/* Active Tab Workspace */}
         {loading && !timeseriesData ? (
-          <div className="bg-[#111113] border border-zinc-800 p-20 rounded-md flex flex-col items-center justify-center gap-3 text-zinc-500 font-mono text-xs">
-            <RefreshCw className="w-6 h-6 text-zinc-400 animate-spin" />
-            <div>COMPUTING DAY-AHEAD D-1 TIME-SERIES ALIGNMENT...</div>
-            <div className="text-[10px] text-zinc-600">QUERYING ELEXON BMRS DATASET ENGINE</div>
+          <div className="bg-[#111113] border border-zinc-800 p-20 rounded-md flex flex-col items-center justify-center gap-3 text-zinc-400 font-sans text-xs">
+            <RefreshCw className="w-5 h-5 text-zinc-400 animate-spin" />
+            <div className="font-medium text-zinc-300">Computing Day-Ahead D-1 time-series alignment...</div>
+            <div className="text-[11px] text-zinc-500">Querying Elexon BMRS dataset engine</div>
           </div>
         ) : (
           <div>
@@ -164,19 +164,19 @@ export const App: React.FC = () => {
       </main>
 
       {/* Terminal Footer */}
-      <footer className="border-t border-zinc-800/80 bg-[#09090B] py-3 text-[11px] font-mono text-zinc-500 mt-auto">
+      <footer className="border-t border-zinc-800/80 bg-[#09090B] py-3.5 text-xs font-sans text-zinc-500 mt-auto">
         <div className="max-w-[1400px] mx-auto px-4 lg:px-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-zinc-400">GRIDPULSE // UK-BM</span>
-            <span>•</span>
-            <span>DAY-AHEAD WHOLESALE MARKET PROCUREMENT INTELLIGENCE</span>
-            <span>•</span>
-            <span className="text-zinc-400">1,488 SETTLEMENT INTERVALS</span>
+            <span className="font-medium text-zinc-300">GridPulse</span>
+            <span>·</span>
+            <span>UK Day-Ahead Wind & Thermal Desk</span>
+            <span>·</span>
+            <span className="font-mono text-zinc-400 text-[11px]">1,488 settlement intervals</span>
           </div>
-          <div className="flex items-center gap-3">
-            <span>SOURCE: ELEXON BMRS (FUELHH WIND & WINDFOR)</span>
-            <span>•</span>
-            <span>SCOPE: JANUARY 2026</span>
+          <div className="flex items-center gap-2">
+            <span>Elexon BMRS Stream</span>
+            <span>·</span>
+            <span>January 2026</span>
           </div>
         </div>
       </footer>

@@ -176,3 +176,13 @@ kjhwr-energy-pilot/
   - [x] Fix Recharts SVG clipping on Horizon Degradation chart and Procurement Simulator demand reference line.
   - [x] Create comprehensive, anonymous `README.md` with problem context, empirical January 2026 findings table, architecture, setup instructions, and AI tools disclosure.
   - [x] Verified Vercel entry point (`python -c "import api.index"`) and clean production build (`npm run build`).
+- [x] **Phase 5: Minimalist Editorial UI Polish**
+  - [x] Refactored `KpiBentoStrip.tsx`: Reduced strip from 6 cramped cards with colored pill boxes to 4 spacious, breathable cards (`Forecast Error (MAE)`, `Forecast Bias`, `P95 Thermal Buffer`, `Monthly Volume (Jan 2026)`), removing internal horizontal dividers and badges in favor of whitespace and clean zinc typography.
+  - [x] Clean human sentence-case typography (`Inter` font): Replaced `//` and ALL-CAPS monospace titles across `Header.tsx`, `TradingViewTab.tsx`, `RiskAnalyticsTab.tsx`, and `SimulatorTab.tsx` with clean `Inter` headers (`font-sans font-medium text-sm text-zinc-100 tracking-normal`), reserving `JetBrains Mono` strictly for numbers, timestamps, and axis ticks.
+  - [x] De-cluttered chart palettes:
+    - In `RiskAnalyticsTab.tsx`: Changed histogram from neon green/red to sophisticated cool slate (`#52525B`) and steel-blue/indigo (`#6366F1` at `0.85`), with clean reference lines for `0 MW` and Mean Bias.
+    - In `RiskAnalyticsTab.tsx`: Reduced horizon degradation chart to 2 crystal-clear series (solid MAE `#38BDF8` and soft indigo dashed P95 `#818CF8`), removing the redundant 3rd yellow series.
+    - In `TradingViewTab.tsx`: Toned down deficit/surplus imbalance bars to soft muted slate (`#3F3F46`) and soft amber (`#F59E0B` at `0.75`).
+  - [x] Streamlined `SimulatorTab.tsx`: Removed `1.`, `2.`, `3.`, `4.` numbering from policy buttons (`Naive Forecast`, `Bias-Adjusted`, `P90 Buffer`, `P95 Buffer (Recommended)`), unified outcome summary metrics in crisp white (`#FAFAFA`), and condensed the wordy 3-column methodology card into a clean 1-line muted footer note.
+  - [x] Verified zero TypeScript or build errors (`npm run build` passed cleanly in 18.2s).
+
