@@ -27,6 +27,13 @@ export const App: React.FC = () => {
   const [cutoffHour, setCutoffHour] = useState<number>(11);
   const [interpolation, setInterpolation] = useState<'step' | 'linear'>('step');
   const [activeTab, setActiveTab] = useState<'trading' | 'analytics' | 'simulator'>('trading');
+  const [selectedSimulatorDate, setSelectedSimulatorDate] = useState<string>('2026-01-28');
+
+  // Callback to seamlessly switch to simulator with preloaded day from analytics log
+  const handleSelectDayForSimulation = useCallback((date: string) => {
+    setSelectedSimulatorDate(date);
+    setActiveTab('simulator');
+  }, []);
 
   // API Data State
   const [summaryData, setSummaryData] = useState<SummaryResponse | null>(null);
@@ -136,7 +143,7 @@ export const App: React.FC = () => {
         )}
 
         {/* Unified Architectural Frame (KPI Ledger + Active Workspace fused together) */}
-        <div className="rounded-xl border border-white/[0.08] bg-[#0B0C0F] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.7)] overflow-hidden">
+        <div className="rounded-xl border border-white/[0.08] bg-[#0A0B0E] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.7)] overflow-hidden">
           {/* Flush 4-column Structural KPI Ledger */}
           <KpiBentoStrip
             kpi={summaryData?.kpi || null}
@@ -144,7 +151,7 @@ export const App: React.FC = () => {
           />
 
           {/* Active Tab Workspace with Smooth Spring/Opacity Transition */}
-          <div className="p-4 sm:p-5">
+          <div className="relative">
             {loading && !timeseriesData ? (
               <div className="p-20 flex flex-col items-center justify-center gap-3 text-zinc-400 font-sans text-xs">
                 <RefreshCw className="w-5 h-5 text-zinc-400 animate-spin" />
@@ -177,6 +184,7 @@ export const App: React.FC = () => {
                       horizonDegradation={horizonData.horizon_degradation}
                       diurnalProfile={horizonData.diurnal_profile}
                       kpi={summaryData.kpi}
+                      onSelectDayForSimulation={handleSelectDayForSimulation}
                     />
                   )}
 
@@ -185,6 +193,7 @@ export const App: React.FC = () => {
                       timeseries={timeseriesData.timeseries}
                       kpi={summaryData?.kpi || null}
                       cutoffHour={cutoffHour}
+                      selectedDate={selectedSimulatorDate}
                     />
                   )}
                 </motion.div>

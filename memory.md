@@ -211,6 +211,25 @@ kjhwr-energy-pilot/
   - [x] Custom SVG Favicon: Added `frontend/public/favicon.svg` and updated `index.html` title to `GridPulse — GB Day-Ahead Wind & Thermal Desk`.
   - [x] Verified zero TypeScript or build errors (`tsc && vite build` in 22.1s).
   - [x] Verified in browser with subagent interaction testing across presets, popovers, and tabs.
+- [x] **Phase 8: Structural Grid, Live Telemetry Readout & Zero-Scroll Split Workbench**
+  - [x] Eliminated "Russian Doll" Nested Boxes:
+    - Removed all inner card borders, margins, and inner rounded corners from within the main unified frame (`rounded-xl border border-white/[0.08] bg-[#0A0B0E] overflow-hidden`).
+    - Fused all charts, panels, and tables flush using edge-to-edge `1px` hairlines (`border-b border-white/[0.07]` and `divide-x divide-white/[0.07]`) with spacious `p-6` internal padding.
+  - [x] Upgraded Tab 1 UX (Live Crosshair Telemetry & Synced Stacked Charts):
+    - Added live interactive monospace telemetry strip in the chart header updating on cursor scrub (`onMouseMove`/`onMouseLeave`) with dynamic `hoveredPoint` tracking (Actual, DA Forecast, Shortfall/Surplus) and calm period average fallback.
+    - Fused Main Chart (`height={310}`) and Shortfall Track (`height={145}`) with `syncId="windMonitor"` so moving cursor over either chart synchronizes vertical crosshairs simultaneously with zero extra scrolling.
+  - [x] Upgraded Tab 2 UX (Monochrome Log & Click-to-Simulate):
+    - Removed default Recharts `-o-` legends; added clean custom legend pills (`w-2 h-2 rounded-[2px]`) to section headers.
+    - Replaced rainbow table styling in `Daily Procurement & Risk Log` with clean monochrome tabular typography (`text-zinc-300`/`text-zinc-400`), subtle amber for `Bias (MW)`, and inline mini progress bars in `Peak Deficit` relative to monthly max (`6,857 MW`).
+    - Added interactive row click handler (`onSelectDayForSimulation`) with hover hint `Simulate Day →`; clicking any row (such as `2026-01-28`) immediately switches to Tab 3 with that date preloaded.
+  - [x] Upgraded Tab 3 UX (Zero-Scroll 12-Column Split Workbench):
+    - Re-architected `SimulatorTab.tsx` into a 12-column side-by-side split workbench:
+      - Left Pane (`lg:col-span-4 p-6 bg-[#0C0D12]`): Delivery Date select, Demand slider (`15,000` to `50,000 MW`), and 4 Risk Policy radio cards (`Naive`, `Bias-Adjusted`, `P90`, `P95 Institutional Buffer`).
+      - Right Pane (`lg:col-span-8`): Top 4-metric strip (`divide-x border-b border-white/[0.07] bg-[#0E1015]`) and live `Dispatch Balance Timeline` chart (`height={320}`) with custom header legend pills (no `-o-` `<Legend />`).
+    - Instant real-time reactivity without scrolling when interacting with sliders or policy buttons.
+  - [x] Maintained strict non-breaking guardrails: backend, API contracts, and routes untouched; verified clean production build (`npm run build` passed with 0 errors).
+  - [x] Verified full interactive flow in local browser subagent testing.
+
 
 
 
