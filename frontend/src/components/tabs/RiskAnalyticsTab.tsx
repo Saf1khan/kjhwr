@@ -29,6 +29,7 @@ interface RiskAnalyticsTabProps {
   diurnalProfile: DiurnalProfileItem[];
   kpi: KpiSummary | null;
   onSelectDayForSimulation?: (date: string) => void;
+  theme?: 'dark' | 'light';
 }
 
 export const RiskAnalyticsTab: React.FC<RiskAnalyticsTabProps> = ({
@@ -38,9 +39,17 @@ export const RiskAnalyticsTab: React.FC<RiskAnalyticsTabProps> = ({
   diurnalProfile,
   kpi,
   onSelectDayForSimulation,
+  theme = 'dark',
 }) => {
   const [sortField, setSortField] = useState<keyof DailyBreakdownItem>('date');
   const [sortAsc, setSortAsc] = useState<boolean>(true);
+
+  const isLight = theme === 'light';
+  const gridColor = isLight ? 'rgba(15, 23, 42, 0.06)' : 'rgba(255, 255, 255, 0.04)';
+  const axisColor = isLight ? '#94A3B8' : '#5E626A';
+  const maeColor = isLight ? '#2563EB' : '#38BDF8';
+  const p95Color = isLight ? '#6366F1' : '#818CF8';
+  const actualColor = isLight ? '#059669' : '#10B981';
 
   const handleSort = (field: keyof DailyBreakdownItem) => {
     if (sortField === field) {
@@ -102,25 +111,25 @@ export const RiskAnalyticsTab: React.FC<RiskAnalyticsTabProps> = ({
                 >
                   <defs>
                     <linearGradient id="histOverGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#38BDF8" stopOpacity={0.9} />
-                      <stop offset="100%" stopColor="#38BDF8" stopOpacity={0.2} />
+                      <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.75} />
+                      <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.2} />
                     </linearGradient>
                     <linearGradient id="histUnderGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#52525B" stopOpacity={0.9} />
-                      <stop offset="100%" stopColor="#52525B" stopOpacity={0.2} />
+                      <stop offset="0%" stopColor="#64748B" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#64748B" stopOpacity={0.12} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid stroke={gridColor} strokeDasharray="3 3" vertical={false} />
                   <XAxis
                     dataKey="center_mw"
-                    stroke="#5E626A"
+                    stroke={axisColor}
                     fontSize={10}
                     tickLine={false}
                     tickFormatter={(val) => `${val > 0 ? '+' : ''}${val}`}
                     fontFamily="JetBrains Mono"
                   />
                   <YAxis
-                    stroke="#5E626A"
+                    stroke={axisColor}
                     fontSize={11}
                     tickLine={false}
                     fontFamily="JetBrains Mono"
@@ -216,18 +225,18 @@ export const RiskAnalyticsTab: React.FC<RiskAnalyticsTabProps> = ({
                       <stop offset="100%" stopColor="#818CF8" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid stroke={gridColor} strokeDasharray="3 3" vertical={false} />
                   <XAxis
                     dataKey="horizon_bucket"
                     tickFormatter={formatHorizonBucket}
                     padding={{ left: 24, right: 24 }}
-                    stroke="#5E626A"
+                    stroke={axisColor}
                     fontSize={10}
                     tickLine={false}
                     fontFamily="JetBrains Mono"
                   />
                   <YAxis
-                    stroke="#5E626A"
+                    stroke={axisColor}
                     fontSize={11}
                     tickLine={false}
                     tickFormatter={(val) => (val === 0 ? '0' : `${Math.round(val / 1000)}k`)}
@@ -251,21 +260,21 @@ export const RiskAnalyticsTab: React.FC<RiskAnalyticsTabProps> = ({
                     type="monotone"
                     dataKey="mae_mw"
                     name="MAE"
-                    stroke="#38BDF8"
+                    stroke={maeColor}
                     strokeWidth={1.75}
                     fill="url(#maeGradient)"
-                    dot={{ r: 3, fill: '#0E0F12', stroke: '#38BDF8', strokeWidth: 1.5 }}
+                    dot={{ r: 3, fill: '#0E0F12', stroke: maeColor, strokeWidth: 1.5 }}
                     isAnimationActive={false}
                   />
                   <Area
                     type="monotone"
                     dataKey="p95_shortfall_mw"
                     name="P95 Shortfall Buffer"
-                    stroke="#818CF8"
+                    stroke={p95Color}
                     strokeWidth={1.5}
                     strokeDasharray="4 4"
                     fill="url(#p95Gradient)"
-                    dot={{ r: 3, fill: '#0E0F12', stroke: '#818CF8', strokeWidth: 1.5 }}
+                    dot={{ r: 3, fill: '#0E0F12', stroke: p95Color, strokeWidth: 1.5 }}
                     isAnimationActive={false}
                   />
                 </ComposedChart>
@@ -284,15 +293,15 @@ export const RiskAnalyticsTab: React.FC<RiskAnalyticsTabProps> = ({
           {/* Custom Header Legend Pills (No Recharts -o- icon) */}
           <div className="flex items-center gap-3 text-xs font-sans">
             <div className="flex items-center gap-1.5 text-zinc-300">
-              <span className="w-2 h-2 rounded-[2px] bg-[#10B981]" />
+              <span className="w-2 h-2 rounded-[2px]" style={{ backgroundColor: actualColor }} />
               <span className="text-[11px]">Actual Wind</span>
             </div>
             <div className="flex items-center gap-1.5 text-zinc-300">
-              <span className="w-2 h-2 rounded-[2px] bg-[#38BDF8]" />
+              <span className="w-2 h-2 rounded-[2px]" style={{ backgroundColor: maeColor }} />
               <span className="text-[11px]">Day-Ahead Forecast</span>
             </div>
             <div className="flex items-center gap-1.5 text-zinc-300">
-              <span className="w-2 h-2 rounded-[2px] bg-[#818CF8]" />
+              <span className="w-2 h-2 rounded-[2px]" style={{ backgroundColor: p95Color }} />
               <span className="text-[11px]">P95 Shortfall Buffer</span>
             </div>
           </div>
@@ -305,17 +314,17 @@ export const RiskAnalyticsTab: React.FC<RiskAnalyticsTabProps> = ({
                 data={diurnalProfile}
                 margin={{ top: 12, right: 15, left: -10, bottom: 5 }}
               >
-                <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+                <CartesianGrid stroke={gridColor} strokeDasharray="3 3" vertical={false} />
                 <XAxis
                   dataKey="time_of_day"
-                  stroke="#5E626A"
+                  stroke={axisColor}
                   fontSize={10}
                   tickLine={false}
                   interval={3}
                   fontFamily="JetBrains Mono"
                 />
                 <YAxis
-                  stroke="#5E626A"
+                  stroke={axisColor}
                   fontSize={11}
                   tickLine={false}
                   tickFormatter={(val) => (val === 0 ? '0' : `${Math.round(val / 1000)}k`)}
@@ -342,7 +351,7 @@ export const RiskAnalyticsTab: React.FC<RiskAnalyticsTabProps> = ({
                   type="monotone"
                   dataKey="avg_actual_mw"
                   name="Actual Wind"
-                  stroke="#10B981"
+                  stroke={actualColor}
                   strokeWidth={1.5}
                   dot={false}
                   isAnimationActive={false}
@@ -351,7 +360,7 @@ export const RiskAnalyticsTab: React.FC<RiskAnalyticsTabProps> = ({
                   type="monotone"
                   dataKey="avg_forecast_mw"
                   name="Day-Ahead Forecast"
-                  stroke="#38BDF8"
+                  stroke={maeColor}
                   strokeWidth={1.5}
                   dot={false}
                   isAnimationActive={false}
@@ -360,7 +369,7 @@ export const RiskAnalyticsTab: React.FC<RiskAnalyticsTabProps> = ({
                   type="monotone"
                   dataKey="p95_shortfall_mw"
                   name="P95 Shortfall Buffer"
-                  stroke="#818CF8"
+                  stroke={p95Color}
                   strokeWidth={1.25}
                   strokeDasharray="3 3"
                   dot={false}

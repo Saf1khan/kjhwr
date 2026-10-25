@@ -29,6 +29,56 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'trading' | 'analytics' | 'simulator'>('trading');
   const [selectedSimulatorDate, setSelectedSimulatorDate] = useState<string>('2026-01-28');
 
+  // Dual-Theme System (Dark default, persisted in localStorage)
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    try {
+      const saved = localStorage.getItem('gridpulse-theme');
+      return saved === 'light' ? 'light' : 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('gridpulse-theme', theme);
+    } catch {}
+    document.documentElement.classList.toggle('light', theme === 'light');
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  }, []);
+
+  // Keyboard Shortcuts: 1, 2, 3 for tabs, T for theme toggle
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'SELECT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (e.key === '1') {
+        setActiveTab('trading');
+      } else if (e.key === '2') {
+        setActiveTab('analytics');
+      } else if (e.key === '3') {
+        setActiveTab('simulator');
+      } else if (e.key === 't' || e.key === 'T') {
+        toggleTheme();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [toggleTheme]);
+
   // Callback to seamlessly switch to simulator with preloaded day from analytics log
   const handleSelectDayForSimulation = useCallback((date: string) => {
     setSelectedSimulatorDate(date);
@@ -109,21 +159,25 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         isHealthy={healthData?.status === 'healthy'}
         onTabChange={setActiveTab}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       {/* Main Workspace Container */}
       <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 lg:px-6 py-4 space-y-4">
-        {/* Contextual Control Bar */}
-        <ContextualControlBar
-          startDate={startDate}
-          endDate={endDate}
-          activePreset={activePreset}
-          cutoffHour={cutoffHour}
-          interpolation={interpolation}
-          onDateRangeChange={handleDateRangeChange}
-          onCutoffHourChange={setCutoffHour}
-          onInterpolationChange={setInterpolation}
-        />
+        {/* Contextual Control Bar - only for trading & analytics */}
+        {activeTab !== 'simulator' && (
+          <ContextualControlBar
+            startDate={startDate}
+            endDate={endDate}
+            activePreset={activePreset}
+            cutoffHour={cutoffHour}
+            interpolation={interpolation}
+            onDateRangeChange={handleDateRangeChange}
+            onCutoffHourChange={setCutoffHour}
+            onInterpolationChange={setInterpolation}
+          />
+        )}
 
         {/* Error Banner */}
         {error && (
@@ -144,11 +198,13 @@ export const App: React.FC = () => {
 
         {/* Unified Architectural Frame (KPI Ledger + Active Workspace fused together) */}
         <div className="rounded-xl border border-white/[0.08] bg-[#0A0B0E] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.7)] overflow-hidden">
-          {/* Flush 4-column Structural KPI Ledger */}
-          <KpiBentoStrip
-            kpi={summaryData?.kpi || null}
-            cutoffHour={cutoffHour}
-          />
+          {/* Flush 4-column Structural KPI Ledger - hidden on simulator tab to prevent scrolling */}
+          {activeTab !== 'simulator' && (
+            <KpiBentoStrip
+              kpi={summaryData?.kpi || null}
+              cutoffHour={cutoffHour}
+            />
+          )}
 
           {/* Active Tab Workspace with Smooth Spring/Opacity Transition */}
           <div className="relative">
@@ -174,6 +230,7 @@ export const App: React.FC = () => {
                       timeseries={timeseriesData.timeseries}
                       p95Buffer={timeseriesData.p95_shortfall_mw}
                       cutoffHour={cutoffHour}
+                      theme={theme}
                     />
                   )}
 
@@ -185,6 +242,7 @@ export const App: React.FC = () => {
                       diurnalProfile={horizonData.diurnal_profile}
                       kpi={summaryData.kpi}
                       onSelectDayForSimulation={handleSelectDayForSimulation}
+                      theme={theme}
                     />
                   )}
 
@@ -194,6 +252,7 @@ export const App: React.FC = () => {
                       kpi={summaryData?.kpi || null}
                       cutoffHour={cutoffHour}
                       selectedDate={selectedSimulatorDate}
+                      theme={theme}
                     />
                   )}
                 </motion.div>

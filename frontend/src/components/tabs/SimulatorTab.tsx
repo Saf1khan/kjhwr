@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -10,12 +11,14 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { KpiSummary, TimeSeriesPoint } from '../../types/api';
+import { ChevronDown, Check } from 'lucide-react';
 
 interface SimulatorTabProps {
   timeseries: TimeSeriesPoint[];
   kpi: KpiSummary | null;
   cutoffHour: number;
   selectedDate?: string;
+  theme?: 'dark' | 'light';
 }
 
 export const SimulatorTab: React.FC<SimulatorTabProps> = ({
@@ -23,11 +26,21 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
   kpi,
   cutoffHour,
   selectedDate,
+  theme = 'dark',
 }) => {
   // Simulator State
   const [targetDate, setTargetDate] = useState<string>(selectedDate || '2026-01-05');
   const [demandMw, setDemandMw] = useState<number>(35000);
   const [riskPolicy, setRiskPolicy] = useState<'naive' | 'bias' | 'p90' | 'p95'>('p95');
+  const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
+  const dateDropdownRef = useRef<HTMLDivElement>(null);
+
+  const isLight = theme === 'light';
+  const gridColor = isLight ? 'rgba(15, 23, 42, 0.06)' : 'rgba(255, 255, 255, 0.04)';
+  const axisColor = isLight ? '#94A3B8' : '#5E626A';
+  const actualColor = isLight ? '#059669' : '#10B981';
+  const thermalColor = isLight ? '#D97706' : '#F97316';
+  const totalGenColor = isLight ? '#2563EB' : '#38BDF8';
 
   // Sync targetDate when selectedDate prop changes (e.g. clicked from Tab 2)
   useEffect(() => {
@@ -35,6 +48,19 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
       setTargetDate(selectedDate);
     }
   }, [selectedDate]);
+
+  // Click outside listener for date popover
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dateDropdownRef.current && !dateDropdownRef.current.contains(e.target as Node)) {
+        setIsDateDropdownOpen(false);
+      }
+    };
+    if (isDateDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isDateDropdownOpen]);
 
   // Filter timeseries for selected delivery date
   const dayPoints = useMemo(() => {
@@ -112,10 +138,9 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
         {/* Left Pane (lg:col-span-4): Reactive Interactive Controls */}
         <div className="lg:col-span-4 p-6 bg-[#0C0D12] flex flex-col justify-between space-y-6">
           <div className="space-y-6">
-            {/* Header info */}
+            {/* Header info (without blue dot) */}
             <div>
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-sky-400" />
                 <h2 className="text-[14px] font-semibold text-[#EDEDEF] font-sans tracking-tight">
                   Procurement Controls
                 </h2>
@@ -125,23 +150,60 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
               </p>
             </div>
 
-            {/* Delivery Date Selector */}
-            <div className="space-y-2">
+            {/* Delivery Date Selector with Custom Framer Motion Popover */}
+            <div className="space-y-2 relative" ref={dateDropdownRef}>
               <label className="text-xs font-medium text-zinc-300 font-sans flex items-center justify-between">
                 <span>Delivery Date (D)</span>
                 <span className="text-[11px] text-[#8A8F98] font-mono">{targetDate}</span>
               </label>
-              <select
-                value={targetDate}
-                onChange={(e) => setTargetDate(e.target.value)}
-                className="w-full bg-[#121316] border border-white/[0.08] hover:border-white/[0.16] text-[#EDEDEF] px-3 py-2 rounded-lg outline-none focus:border-sky-500 font-mono text-xs transition-colors cursor-pointer"
+
+              <button
+                type="button"
+                onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
+                className="w-full bg-[#121316] border border-white/[0.08] hover:border-white/[0.16] text-[#EDEDEF] px-3 py-2 rounded-lg outline-none font-mono text-xs transition-colors cursor-pointer flex items-center justify-between shadow-sm"
               >
-                {availableDates.map((d) => (
-                  <option key={d} value={d} className="bg-[#121316] text-[#EDEDEF]">
-                    {d} {d === '2026-01-28' ? '· Extreme Deficit (6,857 MW)' : ''}
-                  </option>
-                ))}
-              </select>
+                <span>
+                  {targetDate} {targetDate === '2026-01-28' ? '· Extreme Deficit (6,857 MW)' : ''}
+                </span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-zinc-400 transition-transform ${
+                    isDateDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              <AnimatePresence>
+                {isDateDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute left-0 top-full mt-1.5 w-full z-50 bg-[#121316] border border-white/[0.1] rounded-xl shadow-2xl py-1.5 max-h-60 overflow-y-auto"
+                  >
+                    {availableDates.map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => {
+                          setTargetDate(d);
+                          setIsDateDropdownOpen(false);
+                        }}
+                        className={`w-full px-3 py-1.5 text-left text-xs font-mono flex items-center justify-between transition-colors ${
+                          d === targetDate
+                            ? 'bg-sky-500/10 text-sky-400 font-semibold'
+                            : 'text-zinc-300 hover:bg-white/[0.04]'
+                        }`}
+                      >
+                        <span>
+                          {d} {d === '2026-01-28' ? '· Extreme Deficit (6,857 MW)' : ''}
+                        </span>
+                        {d === targetDate && <Check className="w-3.5 h-3.5 text-sky-400" />}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Demand Slider */}
@@ -333,20 +395,20 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
 
             {/* Custom Header Legend Pills (No Recharts -o- icon) */}
             <div className="flex items-center gap-3 text-xs font-sans">
-              <div className="flex items-center gap-1.5 text-zinc-300">
-                <span className="w-2.5 h-[2px] bg-amber-400" />
+              <div className="flex items-center gap-1.5 text-[#8A8F98]">
+                <span className="w-2.5 h-[2px] bg-amber-500" />
                 <span className="text-[11px]">Demand ({Math.round(demandMw / 1000)}k MW)</span>
               </div>
-              <div className="flex items-center gap-1.5 text-zinc-300">
-                <span className="w-2 h-2 rounded-[2px] bg-[#10B981]" />
+              <div className="flex items-center gap-1.5 text-[#8A8F98]">
+                <span className="w-2 h-2 rounded-[2px]" style={{ backgroundColor: actualColor }} />
                 <span className="text-[11px]">Actual Wind</span>
               </div>
-              <div className="flex items-center gap-1.5 text-zinc-300">
-                <span className="w-2 h-2 rounded-[2px] bg-[#F97316]" />
+              <div className="flex items-center gap-1.5 text-[#8A8F98]">
+                <span className="w-2 h-2 rounded-[2px]" style={{ backgroundColor: thermalColor }} />
                 <span className="text-[11px]">Thermal</span>
               </div>
-              <div className="flex items-center gap-1.5 text-zinc-300">
-                <span className="w-2 h-2 rounded-[2px] bg-[#38BDF8]" />
+              <div className="flex items-center gap-1.5 text-[#8A8F98]">
+                <span className="w-2 h-2 rounded-[2px]" style={{ backgroundColor: totalGenColor }} />
                 <span className="text-[11px]">Total Gen</span>
               </div>
             </div>
@@ -360,10 +422,10 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                   data={simulationData}
                   margin={{ top: 12, right: 25, left: -10, bottom: 20 }}
                 >
-                  <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid stroke={gridColor} strokeDasharray="3 3" vertical={false} />
                   <XAxis
                     dataKey="settlementPeriod"
-                    stroke="#5E626A"
+                    stroke={axisColor}
                     fontSize={10}
                     tickLine={false}
                     fontFamily="JetBrains Mono"
@@ -371,13 +433,13 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                       value: 'Settlement Period (1 to 48)',
                       position: 'insideBottom',
                       offset: -10,
-                      fill: '#71717A',
+                      fill: axisColor,
                       fontSize: 10,
                       fontFamily: 'Inter, sans-serif',
                     }}
                   />
                   <YAxis
-                    stroke="#5E626A"
+                    stroke={axisColor}
                     fontSize={11}
                     tickLine={false}
                     tickFormatter={(val) => (val === 0 ? '0' : `${Math.round(val / 1000)}k`)}
@@ -388,17 +450,25 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                       if (!active || !payload || !payload.length) return null;
                       const d = payload[0].payload;
                       return (
-                        <div className="bg-[#121316] border border-white/[0.12] p-3 rounded-lg shadow-xl text-xs font-mono space-y-1">
-                          <div className="text-[#EDEDEF] font-semibold font-sans border-b border-white/[0.08] pb-1">
+                        <div className={`p-3 rounded-lg shadow-xl text-xs font-mono space-y-1 ${
+                          isLight
+                            ? 'bg-white border border-slate-200 text-slate-800'
+                            : 'bg-[#121316] border border-white/[0.12] text-zinc-200'
+                        }`}>
+                          <div className={`font-semibold font-sans border-b pb-1 ${
+                            isLight ? 'border-slate-100 text-slate-900' : 'border-white/[0.08] text-[#EDEDEF]'
+                          }`}>
                             {d.settlementDate} • SP {d.settlementPeriod} ({d.startTime?.split('T')[1]?.substring(0, 5)} UTC)
                           </div>
-                          <div className="text-[#8A8F98]">Demand: {d.demand_mw.toLocaleString()} MW</div>
-                          <div className="text-emerald-400">Actual Wind: {d.actual_mw.toLocaleString()} MW</div>
-                          <div className="text-amber-400">Procured Thermal: {d.thermal_procured_mw.toLocaleString()} MW</div>
-                          <div className="text-sky-400">Total Generation: {d.total_generation_mw.toLocaleString()} MW</div>
+                          <div className={isLight ? 'text-slate-500' : 'text-[#8A8F98]'}>Demand: {d.demand_mw.toLocaleString()} MW</div>
+                          <div style={{ color: actualColor }}>Actual Wind: {d.actual_mw.toLocaleString()} MW</div>
+                          <div style={{ color: thermalColor }}>Procured Thermal: {d.thermal_procured_mw.toLocaleString()} MW</div>
+                          <div style={{ color: totalGenColor }}>Total Generation: {d.total_generation_mw.toLocaleString()} MW</div>
                           <div
-                            className={`pt-1 border-t border-white/[0.08] font-semibold ${
-                              d.margin_mw >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                            className={`pt-1 border-t font-semibold ${
+                              isLight ? 'border-slate-100' : 'border-white/[0.08]'
+                            } ${
+                              d.margin_mw >= 0 ? (isLight ? 'text-emerald-600' : 'text-emerald-400') : (isLight ? 'text-rose-600' : 'text-rose-400')
                             }`}
                           >
                             {d.margin_mw >= 0 ? `+${d.margin_mw} MW Surplus` : `${d.margin_mw} MW Shortfall`}
@@ -410,7 +480,7 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
 
                   <ReferenceLine
                     y={demandMw}
-                    stroke="#F59E0B"
+                    stroke={isLight ? '#D97706' : '#F59E0B'}
                     strokeWidth={1.5}
                     strokeDasharray="4 4"
                   />
@@ -419,7 +489,7 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                     type="monotone"
                     dataKey="actual_mw"
                     name="Actual Wind"
-                    stroke="#10B981"
+                    stroke={actualColor}
                     strokeWidth={1.5}
                     dot={false}
                     isAnimationActive={false}
@@ -429,7 +499,7 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                     type="monotone"
                     dataKey="thermal_procured_mw"
                     name="Procured Thermal"
-                    stroke="#F97316"
+                    stroke={thermalColor}
                     strokeWidth={1.5}
                     dot={false}
                     isAnimationActive={false}
@@ -439,7 +509,7 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                     type="monotone"
                     dataKey="total_generation_mw"
                     name="Total Generation"
-                    stroke="#38BDF8"
+                    stroke={totalGenColor}
                     strokeWidth={2}
                     dot={false}
                     isAnimationActive={false}

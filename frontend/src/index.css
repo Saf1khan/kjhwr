@@ -2,13 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Dark Mode Palette (Default) */
+  --bg-canvas: #090A0C;
+  --bg-surface: #0F1115;
+  --bg-elevated: #16181E;
+  --border-subtle: rgba(255, 255, 255, 0.075);
+  --text-primary: #F4F4F6;
+  --text-secondary: #8E929F;
+  --text-muted: #5A5E6B;
+  --chart-grid: rgba(255, 255, 255, 0.05);
+  --accent-teal: #14B8A6;
+  color-scheme: dark;
+}
+
+html.light {
+  /* Light Mode Palette — Warm Alabaster & Crisp Ink (Stripe / Vercel style) */
+  --bg-canvas: #F6F8FA;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F1F5F9;
+  --border-subtle: #E2E8F0;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --chart-grid: rgba(15, 23, 42, 0.06);
+  --accent-teal: #0D9488;
+  color-scheme: light;
+}
+
 @layer base {
   body {
-    background-color: #08090A;
-    color: #EDEDEF;
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
-    color-scheme: dark;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
@@ -27,7 +55,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #08090A;
+  background: var(--bg-canvas);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -35,21 +63,40 @@
   border-radius: 2px;
 }
 
+html.light ::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #343741;
 }
 
-/* Linear / Vercel Surface Hierarchy */
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Surface Hierarchy */
 .surface-well {
   background: #0C0D0F;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+}
+
+html.light .surface-well {
+  background: #F8FAFC;
+  border-color: #E2E8F0;
 }
 
 .surface-card {
   background: linear-gradient(180deg, #121316 0%, #0E0F12 100%);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border-subtle);
   box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06), 0 4px 20px -2px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
+}
+
+html.light .surface-card {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
 }
 
 .surface-button {
@@ -59,7 +106,58 @@
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.surface-button:hover {
-  background: #1F2026;
-  border-color: rgba(255, 255, 255, 0.14);
+html.light .surface-button {
+  background: #FFFFFF;
+  border-color: #CBD5E1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
+
+/* Light Mode Overrides for Structural Grid & Deep Utility Classes */
+html.light .bg-\[\#08090A\] { background-color: var(--bg-canvas) !important; }
+html.light .bg-\[\#0A0B0E\] { background-color: var(--bg-surface) !important; }
+html.light .bg-\[\#0B0C0F\] { background-color: var(--bg-surface) !important; }
+html.light .bg-\[\#0C0D12\] { background-color: var(--bg-elevated) !important; }
+html.light .bg-\[\#0E1015\] { background-color: var(--bg-elevated) !important; }
+html.light .bg-\[\#121316\] { background-color: var(--bg-surface) !important; }
+html.light .bg-\[\#0D0E12\] { background-color: #E2E8F0 !important; }
+html.light .bg-\[\#18191E\] { background-color: var(--bg-elevated) !important; }
+html.light .bg-\[\#1A1D24\] { background-color: #FFFFFF !important; }
+html.light .bg-\[\#13151C\] { background-color: #FFFFFF !important; }
+html.light .bg-\[\#0C0D0F\] { background-color: #F8FAFC !important; }
+
+/* Light Mode Borders & Dividers */
+html.light [class*="border-white\/"] { border-color: var(--border-subtle) !important; }
+html.light [class*="divide-white\/"] > :not([hidden]) ~ :not([hidden]) { border-color: var(--border-subtle) !important; }
+
+/* Light Mode Typography Mappings */
+html.light .text-\[\#EDEDEF\],
+html.light .text-\[\#F4F4F6\],
+html.light .text-white,
+html.light .text-zinc-100,
+html.light .text-zinc-200 {
+  color: var(--text-primary) !important;
+}
+
+html.light .text-zinc-300,
+html.light .text-zinc-400,
+html.light .text-\[\#8A8F98\] {
+  color: var(--text-secondary) !important;
+}
+
+html.light .text-\[\#5E626A\],
+html.light .text-\[\#6E737D\],
+html.light .text-zinc-500 {
+  color: var(--text-muted) !important;
+}
+
+/* Light Mode Component Overrides */
+html.light header {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-bottom-color: var(--border-subtle) !important;
+}
+
+html.light footer {
+  background-color: var(--bg-surface) !important;
+  border-top-color: var(--border-subtle) !important;
+}
+

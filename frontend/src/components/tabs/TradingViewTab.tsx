@@ -18,16 +18,25 @@ interface TradingViewTabProps {
   timeseries: TimeSeriesPoint[];
   p95Buffer: number;
   cutoffHour: number;
+  theme?: 'dark' | 'light';
 }
 
 export const TradingViewTab: React.FC<TradingViewTabProps> = ({
   timeseries,
   p95Buffer,
   cutoffHour,
+  theme = 'dark',
 }) => {
   const [showLatest, setShowLatest] = useState(true);
   const [showBufferLine, setShowBufferLine] = useState(true);
   const [hoveredPoint, setHoveredPoint] = useState<TimeSeriesPoint | null>(null);
+
+  const isLight = theme === 'light';
+  const actualColor = isLight ? '#059669' : '#10B981';
+  const forecastColor = isLight ? '#2563EB' : '#60A5FA';
+  const deficitColor = isLight ? '#D97706' : '#F59E0B';
+  const gridColor = isLight ? 'rgba(15, 23, 42, 0.06)' : 'rgba(255,255,255,0.04)';
+  const axisColor = isLight ? '#94A3B8' : '#5E626A';
 
   // Period averages for live header fallback
   const averages = useMemo(() => {
@@ -70,7 +79,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
     setHoveredPoint(null);
   };
 
-  // Custom Rich Tooltip
+  // Custom Rich Tooltip (Clean, Editorial, No Clutter)
   const CustomTooltip = ({ active, payload }: any) => {
     if (!active || !payload || !payload.length) return null;
     const pt: TimeSeriesPoint = payload[0].payload;
@@ -122,9 +131,9 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
           </div>
 
           {isShortfall && (
-            <div className="bg-amber-950/20 border border-amber-800/40 p-1.5 rounded flex items-center justify-between text-[10px] font-sans">
-              <span className="text-amber-300">Thermal Deficit:</span>
-              <span className="text-amber-200 font-mono font-bold">+{pt.shortfall_mw} MW</span>
+            <div className="flex items-center justify-between text-[11px] font-sans pt-0.5">
+              <span className="text-amber-400/90 font-medium">Thermal Deficit:</span>
+              <span className="text-amber-300 font-mono font-bold">+{pt.shortfall_mw} MW</span>
             </div>
           )}
         </div>
@@ -252,15 +261,15 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
             >
               <defs>
                 <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#10B981" stopOpacity={0.14} />
-                  <stop offset="100%" stopColor="#10B981" stopOpacity={0.0} />
+                  <stop offset="0%" stopColor={actualColor} stopOpacity={0.16} />
+                  <stop offset="100%" stopColor={actualColor} stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+              <CartesianGrid stroke={gridColor} strokeDasharray="3 3" vertical={false} />
               <XAxis
                 dataKey="startTime"
                 tickFormatter={formatXAxis}
-                stroke="#5E626A"
+                stroke={axisColor}
                 fontSize={10}
                 tickLine={false}
                 minTickGap={45}
@@ -268,7 +277,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                 fontFamily="JetBrains Mono"
               />
               <YAxis
-                stroke="#5E626A"
+                stroke={axisColor}
                 fontSize={11}
                 tickLine={false}
                 tickFormatter={(val) => (val === 0 ? '0' : `${Math.round(val / 1000)}k`)}
@@ -282,7 +291,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                 type="monotone"
                 dataKey="actual_mw"
                 name="Actual Wind Generation"
-                stroke="#10B981"
+                stroke={actualColor}
                 strokeWidth={1.5}
                 fill="url(#actualGradient)"
                 dot={false}
@@ -294,7 +303,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                 type="stepAfter"
                 dataKey="day_ahead_forecast_mw"
                 name="Day-Ahead Forecast"
-                stroke="#38BDF8"
+                stroke={forecastColor}
                 strokeWidth={1.5}
                 dot={false}
                 isAnimationActive={false}
@@ -353,11 +362,11 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
               >
-                <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+                <CartesianGrid stroke={gridColor} strokeDasharray="3 3" vertical={false} />
                 <XAxis
                   dataKey="startTime"
                   tickFormatter={formatXAxis}
-                  stroke="#5E626A"
+                  stroke={axisColor}
                   fontSize={10}
                   tickLine={false}
                   minTickGap={45}
@@ -365,7 +374,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                   fontFamily="JetBrains Mono"
                 />
                 <YAxis
-                  stroke="#5E626A"
+                  stroke={axisColor}
                   fontSize={11}
                   tickLine={false}
                   tickFormatter={(val) => {
@@ -375,13 +384,14 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                   }}
                   fontFamily="JetBrains Mono"
                 />
-                <Tooltip content={<CustomTooltip />} />
-                <ReferenceLine y={0} stroke="#3F3F46" strokeWidth={1} />
+                {/* Single Tooltip Fix: Bottom chart only syncs cursor crosshair, does not show duplicate popup box */}
+                <Tooltip content={() => null} cursor={{ fill: 'rgba(148,163,184,0.08)' }} />
+                <ReferenceLine y={0} stroke={isLight ? '#CBD5E1' : '#3F3F46'} strokeWidth={1} />
 
                 {showBufferLine && (
                   <ReferenceLine
                     y={p95Buffer}
-                    stroke="#F59E0B"
+                    stroke={deficitColor}
                     strokeDasharray="4 4"
                     strokeWidth={1.25}
                   />
@@ -394,8 +404,8 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                   shape={(props: any) => {
                     const { x, y, width, height, value } = props;
                     const isShortfall = value > 0;
-                    const fillColor = isShortfall ? '#F59E0B' : '#3F3F46';
-                    const fillOpacity = isShortfall ? 0.75 : 0.8;
+                    const fillColor = isShortfall ? deficitColor : (isLight ? '#94A3B8' : '#3F3F46');
+                    const fillOpacity = isShortfall ? 0.8 : 0.6;
                     return (
                       <rect
                         x={x}
@@ -410,12 +420,12 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                   }}
                 />
 
-                {/* Dark timeline scrubber */}
+                {/* Theme-adaptive timeline scrubber */}
                 <Brush
                   dataKey="startTime"
                   height={20}
-                  stroke="rgba(255,255,255,0.12)"
-                  fill="#090A0D"
+                  stroke={isLight ? '#CBD5E1' : 'rgba(255,255,255,0.12)'}
+                  fill={isLight ? '#F1F5F9' : '#090A0D'}
                   travellerWidth={8}
                   tickFormatter={() => ""}
                 />

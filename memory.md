@@ -227,8 +227,24 @@ kjhwr-energy-pilot/
       - Left Pane (`lg:col-span-4 p-6 bg-[#0C0D12]`): Delivery Date select, Demand slider (`15,000` to `50,000 MW`), and 4 Risk Policy radio cards (`Naive`, `Bias-Adjusted`, `P90`, `P95 Institutional Buffer`).
       - Right Pane (`lg:col-span-8`): Top 4-metric strip (`divide-x border-b border-white/[0.07] bg-[#0E1015]`) and live `Dispatch Balance Timeline` chart (`height={320}`) with custom header legend pills (no `-o-` `<Legend />`).
     - Instant real-time reactivity without scrolling when interacting with sliders or policy buttons.
-  - [x] Maintained strict non-breaking guardrails: backend, API contracts, and routes untouched; verified clean production build (`npm run build` passed with 0 errors).
   - [x] Verified full interactive flow in local browser subagent testing.
+- [x] **Phase 9: Dual-Theme (Dark & Light Mode) + Editorial Color & UX Polish**
+  - [x] Implemented seamless **Dark / Light Mode System**:
+    - Persisted theme state (`'dark' | 'light'`) in `localStorage` under `gridpulse-theme`, defaulting to `'dark'`.
+    - Added tactile Framer Motion spring icon rotation button in `Header.tsx` (between Sun and Moon SVGs).
+    - Defined CSS variable palette in `index.css` on `:root` and `html.light` (Warm Alabaster `#F6F8FA`, white surface `#FFFFFF`, elevated `#F1F5F9`, border `#E2E8F0`, deep slate ink `#0F172A`).
+    - Added global keyboard shortcuts: `1`, `2`, `3` to switch tabs, and `t` / `T` (when not focused on form inputs) to toggle theme.
+  - [x] Editorial Palette & Minimalist Typography (`KpiBentoStrip.tsx`, Charts):
+    - Removed all colored circle bullet dots (`●`) in front of KPI subtexts.
+    - Pure monochrome typography for all labels, numbers, and subtexts.
+    - Added subtle `2px` structural rule with cohesive slate-teal accent (`#14B8A6` in dark, `#0D9488` in light) across the KPI strip.
+    - Charts updated with institutional teal (`#10B981` / `#059669`), refined cobalt (`#60A5FA` / `#2563EB`), muted ochre (`#F59E0B` / `#D97706`), and cohesive slate-cobalt histogram (`#3B82F6` 0.75 / `#64748B` 0.4).
+  - [x] Fixed 3 Concrete Production UX Bugs:
+    - **Double Overlapping Tooltip Bug (`TradingViewTab.tsx`)**: Bottom chart set to `<Tooltip content={() => null} cursor={{ fill: 'rgba(148,163,184,0.08)' }} />`, keeping crosshairs synchronized while rendering only one clean floating tooltip on top. Removed inner orange box around `Thermal Deficit`.
+    - **8 Giant Numbers / Scrolling Bug (`App.tsx` & `SimulatorTab.tsx`)**: Hidden top `<KpiBentoStrip />` and `<ContextualControlBar />` when `activeTab === 'simulator'`, ensuring the 12-column split workbench fits 100% inside laptop viewport without scrolling. Removed blue dot next to `Procurement Controls`.
+    - **Native `<select>` Dropdowns (`Header.tsx` & `SimulatorTab.tsx`)**: Replaced raw browser `<select>` dropdowns for `Gate Cutoff` and `Delivery Date (D)` with custom Framer Motion `<AnimatePresence>` popover menus.
+  - [x] Verified zero TypeScript or build errors (`npm run build` passed cleanly).
+  - [x] Verified all features and interactions in local browser across dark & light modes.
 
 
 

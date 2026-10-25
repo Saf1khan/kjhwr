@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, Check } from 'lucide-react';
+import { Calendar, Clock, Check, Sun, Moon, ChevronDown } from 'lucide-react';
 
 export type PresetType = 'full' | 'w1' | 'w2' | 'w3' | 'w4' | 'custom';
 
@@ -8,12 +8,16 @@ interface HeaderProps {
   activeTab: 'trading' | 'analytics' | 'simulator';
   isHealthy: boolean;
   onTabChange: (tab: 'trading' | 'analytics' | 'simulator') => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   isHealthy,
   onTabChange,
+  theme,
+  onToggleTheme,
 }) => {
   const tabs: { id: 'trading' | 'analytics' | 'simulator'; label: string }[] = [
     { id: 'trading', label: 'Forecast Monitor' },
@@ -72,30 +76,56 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Center/Right: Recessed Segmented Dock with Spring Layout Animation */}
-        <nav className="flex items-center bg-[#0D0E12] p-1 rounded-lg border border-white/[0.07]">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => onTabChange(tab.id)}
-                className={`relative px-3.5 py-1 text-[13px] font-sans font-medium rounded-md transition-colors ${
-                  isActive ? 'text-white' : 'text-zinc-400 hover:text-zinc-200'
-                }`}
+        {/* Center/Right: Recessed Segmented Dock + Theme Toggle */}
+        <div className="flex items-center gap-2.5">
+          <nav className="flex items-center bg-[#0D0E12] p-1 rounded-lg border border-white/[0.07]">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => onTabChange(tab.id)}
+                  className={`relative px-3.5 py-1 text-[13px] font-sans font-medium rounded-md transition-colors ${
+                    isActive ? 'text-white' : 'text-zinc-400 hover:text-zinc-200'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="workspaceTabPill"
+                      className="absolute inset-0 bg-[#1A1D24] border border-white/[0.1] rounded-md shadow-sm"
+                      transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                  <span className="relative z-10">{tab.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Theme Toggle Button */}
+          <button
+            onClick={onToggleTheme}
+            className="p-2 rounded-lg border border-white/[0.08] bg-[#0D0E12] text-zinc-400 hover:text-white transition-colors relative flex items-center justify-center cursor-pointer"
+            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode (Shortcut: T)`}
+            aria-label="Toggle theme"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={theme}
+                initial={{ rotate: -90, opacity: 0, scale: 0.8 }}
+                animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                exit={{ rotate: 90, opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.18 }}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="workspaceTabPill"
-                    className="absolute inset-0 bg-[#1A1D24] border border-white/[0.1] rounded-md shadow-sm"
-                    transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-                  />
+                {theme === 'dark' ? (
+                  <Sun className="w-4 h-4 text-amber-300" />
+                ) : (
+                  <Moon className="w-4 h-4 text-slate-700" />
                 )}
-                <span className="relative z-10">{tab.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+              </motion.div>
+            </AnimatePresence>
+          </button>
+        </div>
       </div>
     </header>
   );
@@ -123,29 +153,34 @@ export const ContextualControlBar: React.FC<ContextualControlBarProps> = ({
   onInterpolationChange,
 }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [isCutoffOpen, setIsCutoffOpen] = useState(false);
   const [customStart, setCustomStart] = useState(startDate);
   const [customEnd, setCustomEnd] = useState(endDate);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const cutoffRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setCustomStart(startDate);
     setCustomEnd(endDate);
   }, [startDate, endDate]);
 
-  // Click outside listener for the anchored popover
+  // Click outside listener for the anchored popovers
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
         setIsPopoverOpen(false);
       }
+      if (cutoffRef.current && !cutoffRef.current.contains(event.target as Node)) {
+        setIsCutoffOpen(false);
+      }
     };
-    if (isPopoverOpen) {
+    if (isPopoverOpen || isCutoffOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isPopoverOpen]);
+  }, [isPopoverOpen, isCutoffOpen]);
 
   const PRESET_OPTIONS: { id: PresetType; label: string; start: string; end: string }[] = [
     { id: 'full', label: 'Full Month · Jan 2026', start: '2026-01-01', end: '2026-01-31' },
@@ -292,21 +327,55 @@ export const ContextualControlBar: React.FC<ContextualControlBarProps> = ({
 
       {/* Right: Compact Custom-Styled Pill Selectors */}
       <div className="flex items-center gap-2">
-        {/* Gate Cutoff Pill */}
-        <div className="flex items-center gap-1.5 bg-[#121316] border border-white/[0.08] rounded-md px-2.5 py-1 text-[12px] text-[#EDEDEF] hover:border-white/[0.14] transition-all">
-          <Clock className="w-3 h-3 text-zinc-400" />
-          <span className="text-zinc-400 text-[12px]">Gate Cutoff:</span>
-          <select
-            value={cutoffHour}
-            onChange={(e) => onCutoffHourChange(Number(e.target.value))}
-            className="bg-transparent text-[#EDEDEF] outline-none font-mono text-[11px] cursor-pointer"
+        {/* Gate Cutoff Custom Popover Dropdown */}
+        <div className="relative" ref={cutoffRef}>
+          <button
+            type="button"
+            onClick={() => setIsCutoffOpen(!isCutoffOpen)}
+            className="flex items-center gap-1.5 bg-[#121316] border border-white/[0.08] rounded-md px-2.5 py-1 text-[12px] text-[#EDEDEF] hover:border-white/[0.14] transition-all cursor-pointer"
           >
-            {CUTOFF_OPTIONS.map((opt) => (
-              <option key={opt.hour} value={opt.hour} className="bg-[#121316] text-[#EDEDEF]">
-                D-1 {opt.hour}:00 UTC
-              </option>
-            ))}
-          </select>
+            <Clock className="w-3 h-3 text-zinc-400" />
+            <span className="text-zinc-400 text-[12px]">Gate Cutoff:</span>
+            <span className="font-mono text-[11px] font-medium text-[#EDEDEF]">
+              D-1 {cutoffHour}:00 UTC
+            </span>
+            <ChevronDown
+              className={`w-3 h-3 text-zinc-400 transition-transform ${
+                isCutoffOpen ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+
+          <AnimatePresence>
+            {isCutoffOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -4, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 top-full mt-1.5 w-60 z-50 bg-[#121316] border border-white/[0.1] rounded-xl shadow-2xl py-1 overflow-hidden"
+              >
+                {CUTOFF_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.hour}
+                    type="button"
+                    onClick={() => {
+                      onCutoffHourChange(opt.hour);
+                      setIsCutoffOpen(false);
+                    }}
+                    className={`w-full px-3 py-1.5 text-left text-xs font-sans flex items-center justify-between transition-colors ${
+                      opt.hour === cutoffHour
+                        ? 'bg-sky-500/10 text-sky-400 font-semibold'
+                        : 'text-zinc-300 hover:bg-white/[0.04]'
+                    }`}
+                  >
+                    <span>{opt.label}</span>
+                    {opt.hour === cutoffHour && <Check className="w-3.5 h-3.5 text-sky-400" />}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Alignment Resolution Pill */}

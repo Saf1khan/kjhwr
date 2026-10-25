@@ -94,11 +94,15 @@ export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi, cutoffHour })
           </span>
           <span className="text-[13px] font-normal text-zinc-500 ml-1.5">MW</span>
         </div>
-        <div className="flex items-center text-[12px] text-zinc-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#6366F1] inline-block mr-2 flex-shrink-0" />
-          <span>
-            {kpi.wape_percent.toFixed(1)}% WAPE · {kpi.latest_mae_mw.toLocaleString()} MW intraday
-          </span>
+        {/* Subtle structural indicator rule */}
+        <div className="h-[2px] w-full bg-white/[0.06] rounded-full overflow-hidden mb-2">
+          <div
+            className="h-full bg-teal-500/80 rounded-full transition-all"
+            style={{ width: `${Math.min(100, Math.round((kpi.mae_mw / 3000) * 100))}%` }}
+          />
+        </div>
+        <div className="text-[12px] text-zinc-400 font-sans">
+          {kpi.wape_percent.toFixed(1)}% WAPE · {kpi.latest_mae_mw.toLocaleString()} MW intraday
         </div>
       </div>
 
@@ -116,9 +120,15 @@ export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi, cutoffHour })
           </span>
           <span className="text-[13px] font-normal text-zinc-500 ml-1.5">MW</span>
         </div>
-        <div className="flex items-center text-[12px] text-zinc-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] inline-block mr-2 flex-shrink-0" />
-          <span>Consistent over-forecast bias</span>
+        {/* Subtle structural indicator rule */}
+        <div className="h-[2px] w-full bg-white/[0.06] rounded-full overflow-hidden mb-2">
+          <div
+            className="h-full bg-teal-500/80 rounded-full transition-all"
+            style={{ width: `${Math.min(100, Math.round((kpi.mbe_mw / 2500) * 100))}%` }}
+          />
+        </div>
+        <div className="text-[12px] text-zinc-400 font-sans">
+          Consistent over-forecast bias
         </div>
       </div>
 
@@ -136,11 +146,15 @@ export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi, cutoffHour })
           </span>
           <span className="text-[13px] font-normal text-zinc-500 ml-1.5">MW</span>
         </div>
-        <div className="flex items-center text-[12px] text-zinc-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#818CF8] inline-block mr-2 flex-shrink-0" />
-          <span>
-            P90: {kpi.p90_shortfall_mw.toLocaleString()} MW · Max: {kpi.max_shortfall_mw.toLocaleString()} MW
-          </span>
+        {/* Subtle structural indicator rule */}
+        <div className="h-[2px] w-full bg-white/[0.06] rounded-full overflow-hidden mb-2">
+          <div
+            className="h-full bg-teal-500/80 rounded-full transition-all"
+            style={{ width: `${Math.min(100, Math.round((kpi.p95_shortfall_mw / 7000) * 100))}%` }}
+          />
+        </div>
+        <div className="text-[12px] text-zinc-400 font-sans">
+          P90: {kpi.p90_shortfall_mw.toLocaleString()} MW · Max: {kpi.max_shortfall_mw.toLocaleString()} MW
         </div>
       </div>
 
@@ -158,11 +172,15 @@ export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi, cutoffHour })
           </span>
           <span className="text-[13px] font-normal text-zinc-500 ml-1.5">GWh</span>
         </div>
-        <div className="flex items-center text-[12px] text-zinc-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block mr-2 flex-shrink-0" />
-          <span>
-            Fcst: {kpi.total_forecast_gwh.toLocaleString()} GWh (-{netDeficitGwh.toLocaleString()} GWh)
-          </span>
+        {/* Subtle structural indicator rule */}
+        <div className="h-[2px] w-full bg-white/[0.06] rounded-full overflow-hidden mb-2">
+          <div
+            className="h-full bg-teal-500/80 rounded-full transition-all"
+            style={{ width: `${Math.min(100, Math.round((kpi.total_actual_gwh / 10000) * 100))}%` }}
+          />
+        </div>
+        <div className="text-[12px] text-zinc-400 font-sans">
+          Fcst: {kpi.total_forecast_gwh.toLocaleString()} GWh (-{netDeficitGwh.toLocaleString()} GWh)
         </div>
       </div>
     </div>
