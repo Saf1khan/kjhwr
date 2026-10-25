@@ -100,26 +100,26 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
   return (
     <div className="space-y-4">
       {/* Top Configuration Bar */}
-      <div className="bg-[#111113] border border-zinc-800/80 rounded-md p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800/80 pb-3">
+      <div className="surface-card p-5 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-3.5">
           <div>
-            <h2 className="text-sm font-semibold text-zinc-100 font-sans tracking-normal">
+            <h2 className="text-[14px] font-semibold text-[#EDEDEF] font-sans tracking-normal">
               Day-Ahead Thermal Procurement Simulator
             </h2>
-            <p className="text-xs text-zinc-500 font-sans mt-0.5">
-              Simulate procurement commitments on Day D-1 before {cutoffHour}:00 UTC gate closure against physical settlement outturn
+            <p className="text-xs text-[#8A8F98] font-sans mt-0.5">
+              Simulate commitments on Day D-1 before {cutoffHour}:00 UTC gate closure against physical settlement outturn
             </p>
           </div>
 
           <div className="flex items-center gap-2 text-xs font-sans">
-            <span className="text-zinc-400">Delivery Date (D):</span>
+            <span className="text-[#8A8F98]">Delivery Date (D):</span>
             <select
               value={targetDate}
               onChange={(e) => setTargetDate(e.target.value)}
-              className="bg-zinc-900 border border-zinc-800 text-zinc-200 px-2.5 py-1 rounded outline-none focus:border-zinc-600 font-mono text-xs cursor-pointer"
+              className="bg-[#121316] border border-white/[0.08] text-[#EDEDEF] px-2.5 py-1 rounded-md outline-none focus:border-white/[0.14] font-mono text-[11px] cursor-pointer"
             >
               {availableDates.map((d) => (
-                <option key={d} value={d} className="bg-zinc-900 text-zinc-200">
+                <option key={d} value={d} className="bg-[#121316] text-[#EDEDEF]">
                   {d}
                 </option>
               ))}
@@ -130,10 +130,10 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
         {/* Parameter Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Demand Slider */}
-          <div className="bg-[#151518] p-3.5 rounded border border-zinc-800/80 space-y-2">
+          <div className="surface-well p-3.5 rounded-lg space-y-2">
             <div className="flex justify-between items-center text-xs">
-              <span className="text-zinc-400 font-sans">Total Demand:</span>
-              <span className="text-zinc-100 font-bold tabular-nums font-mono">{demandMw.toLocaleString()} MW</span>
+              <span className="text-[#8A8F98] font-sans">Total Demand:</span>
+              <span className="text-[#EDEDEF] font-bold tabular-nums font-mono">{demandMw.toLocaleString()} MW</span>
             </div>
             <input
               type="range"
@@ -142,9 +142,9 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
               step={1000}
               value={demandMw}
               onChange={(e) => setDemandMw(Number(e.target.value))}
-              className="w-full accent-zinc-200 cursor-pointer h-1 bg-zinc-800 rounded"
+              className="w-full accent-[#38BDF8] cursor-pointer h-1 bg-[#18191E] rounded"
             />
-            <div className="flex justify-between text-[10px] text-zinc-600 font-mono">
+            <div className="flex justify-between text-[10px] text-[#5E626A] font-mono">
               <span>15 GW</span>
               <span>35 GW</span>
               <span>50 GW</span>
@@ -152,107 +152,122 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
           </div>
 
           {/* Risk Policy Selector */}
-          <div className="bg-[#151518] p-3.5 rounded border border-zinc-800/80 md:col-span-2 space-y-2">
-            <div className="text-xs text-zinc-400 font-sans">
+          <div className="surface-well p-3.5 rounded-lg md:col-span-2 space-y-2">
+            <div className="text-xs text-[#8A8F98] font-sans">
               Risk Appetite & Thermal Buffer Policy:
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <button
+                type="button"
                 onClick={() => setRiskPolicy('naive')}
-                className={`p-2.5 rounded border text-left transition-all ${
+                className={`relative p-2.5 rounded-lg text-left transition-all ${
                   riskPolicy === 'naive'
-                    ? 'bg-zinc-800 border-zinc-500 text-white shadow-sm'
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                    ? 'surface-card border-[#38BDF8] shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
+                    : 'bg-[#0C0D0F] border border-white/[0.06] hover:border-white/[0.12] hover:bg-[#121316]'
                 }`}
               >
-                <div className="text-xs font-semibold font-sans">Naive Forecast</div>
-                <div className="text-[11px] text-zinc-500 font-sans mt-0.5">Trust raw wind · 0 MW</div>
+                {riskPolicy === 'naive' && (
+                  <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#38BDF8]" />
+                )}
+                <div className="text-xs font-semibold font-sans text-[#EDEDEF]">Naive Forecast</div>
+                <div className="text-[11px] text-[#8A8F98] font-sans mt-0.5">Trust raw wind · 0 MW</div>
               </button>
 
               <button
+                type="button"
                 onClick={() => setRiskPolicy('bias')}
-                className={`p-2.5 rounded border text-left transition-all ${
+                className={`relative p-2.5 rounded-lg text-left transition-all ${
                   riskPolicy === 'bias'
-                    ? 'bg-zinc-800 border-zinc-500 text-white shadow-sm'
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                    ? 'surface-card border-[#38BDF8] shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
+                    : 'bg-[#0C0D0F] border border-white/[0.06] hover:border-white/[0.12] hover:bg-[#121316]'
                 }`}
               >
-                <div className="text-xs font-semibold font-sans">Bias-Adjusted</div>
-                <div className="text-[11px] text-zinc-500 font-sans mt-0.5">Subtract MBE · -{kpi?.mbe_mw || 1840} MW</div>
+                {riskPolicy === 'bias' && (
+                  <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#38BDF8]" />
+                )}
+                <div className="text-xs font-semibold font-sans text-[#EDEDEF]">Bias-Adjusted</div>
+                <div className="text-[11px] text-[#8A8F98] font-sans mt-0.5">Subtract MBE · -{kpi?.mbe_mw || 1840} MW</div>
               </button>
 
               <button
+                type="button"
                 onClick={() => setRiskPolicy('p90')}
-                className={`p-2.5 rounded border text-left transition-all ${
+                className={`relative p-2.5 rounded-lg text-left transition-all ${
                   riskPolicy === 'p90'
-                    ? 'bg-zinc-800 border-zinc-500 text-white shadow-sm'
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                    ? 'surface-card border-[#38BDF8] shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
+                    : 'bg-[#0C0D0F] border border-white/[0.06] hover:border-white/[0.12] hover:bg-[#121316]'
                 }`}
               >
-                <div className="text-xs font-semibold font-sans">P90 Buffer</div>
-                <div className="text-[11px] text-zinc-500 font-sans mt-0.5">+{kpi?.p90_shortfall_mw || 4347} MW buffer</div>
+                {riskPolicy === 'p90' && (
+                  <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#38BDF8]" />
+                )}
+                <div className="text-xs font-semibold font-sans text-[#EDEDEF]">P90 Buffer</div>
+                <div className="text-[11px] text-[#8A8F98] font-sans mt-0.5">+{kpi?.p90_shortfall_mw || 4347} MW buffer</div>
               </button>
 
               <button
+                type="button"
                 onClick={() => setRiskPolicy('p95')}
-                className={`p-2.5 rounded border text-left transition-all ${
+                className={`relative p-2.5 rounded-lg text-left transition-all ${
                   riskPolicy === 'p95'
-                    ? 'bg-zinc-800 border-zinc-500 text-white shadow-sm'
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                    ? 'surface-card border-[#38BDF8] shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
+                    : 'bg-[#0C0D0F] border border-white/[0.06] hover:border-white/[0.12] hover:bg-[#121316]'
                 }`}
               >
-                <div className="text-xs font-semibold font-sans text-sky-400">P95 Buffer (Recommended)</div>
-                <div className="text-[11px] text-zinc-400 font-sans mt-0.5">+{kpi?.p95_shortfall_mw || 5378} MW buffer</div>
+                {riskPolicy === 'p95' && (
+                  <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#38BDF8]" />
+                )}
+                <div className="text-xs font-semibold font-sans text-[#EDEDEF]">P95 Buffer</div>
+                <div className="text-[11px] text-[#38BDF8] font-sans mt-0.5">+{kpi?.p95_shortfall_mw || 5378} MW buffer</div>
               </button>
             </div>
           </div>
         </div>
 
         {/* Outcome Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-zinc-800/80 border border-zinc-800/80 rounded overflow-hidden">
-          <div className="bg-[#111113] p-3.5">
-            <span className="text-xs text-zinc-400 font-sans">Avg Wind Forecast</span>
-            <div className="text-lg font-bold text-[#FAFAFA] font-mono tabular-nums mt-0.5">
-              {avgWindForecast.toLocaleString()} <span className="text-xs text-zinc-400 font-normal">MW</span>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 pt-2">
+          <div className="surface-well p-3.5 rounded-lg flex flex-col justify-between">
+            <span className="text-[12px] font-medium text-[#8A8F98] font-sans">Avg Wind Forecast</span>
+            <div className="metric-value text-[24px] font-semibold text-[#F4F4F6] my-1">
+              {avgWindForecast.toLocaleString()} <span className="text-[13px] font-normal text-[#6E737D]">MW</span>
             </div>
+            <span className="text-[11px] text-[#5E626A] font-mono">DAY-AHEAD</span>
           </div>
 
-          <div className="bg-[#111113] p-3.5">
-            <span className="text-xs text-zinc-400 font-sans">Thermal Buffer</span>
-            <div className="text-lg font-bold text-[#FAFAFA] font-mono tabular-nums mt-0.5">
-              +{policyBuffer.toLocaleString()} <span className="text-xs text-zinc-400 font-normal">MW</span>
+          <div className="surface-well p-3.5 rounded-lg flex flex-col justify-between">
+            <span className="text-[12px] font-medium text-[#8A8F98] font-sans">Thermal Buffer</span>
+            <div className="metric-value text-[24px] font-semibold text-[#F4F4F6] my-1">
+              +{policyBuffer.toLocaleString()} <span className="text-[13px] font-normal text-[#6E737D]">MW</span>
             </div>
+            <span className="text-[11px] text-[#5E626A] font-mono">{riskPolicy.toUpperCase()} POLICY</span>
           </div>
 
-          <div className="bg-[#111113] p-3.5">
-            <span className="text-xs text-zinc-400 font-sans">Required Thermal</span>
-            <div className="text-lg font-bold text-[#FAFAFA] font-mono tabular-nums mt-0.5">
-              {avgThermalProcured.toLocaleString()} <span className="text-xs text-zinc-400 font-normal">MW</span>
+          <div className="surface-well p-3.5 rounded-lg flex flex-col justify-between">
+            <span className="text-[12px] font-medium text-[#8A8F98] font-sans">Required Thermal</span>
+            <div className="metric-value text-[24px] font-semibold text-[#F4F4F6] my-1">
+              {avgThermalProcured.toLocaleString()} <span className="text-[13px] font-normal text-[#6E737D]">MW</span>
             </div>
+            <span className="text-[11px] text-[#5E626A] font-mono">D-1 COMMITTED</span>
           </div>
 
-          <div className="bg-[#111113] p-3.5 flex flex-col justify-between">
-            <span className="text-xs text-zinc-400 font-sans">Periods Protected</span>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-lg font-bold text-[#FAFAFA] font-mono tabular-nums">
-                {protectionPercent}%
-              </span>
-              <span className="text-xs text-zinc-400 font-sans">
-                ({protectedCount}/{simulationData.length} SPs)
-              </span>
+          <div className="surface-well p-3.5 rounded-lg flex flex-col justify-between">
+            <span className="text-[12px] font-medium text-[#8A8F98] font-sans">Periods Protected</span>
+            <div className="metric-value text-[24px] font-semibold text-[#F4F4F6] my-1">
+              {protectionPercent}%
             </div>
+            <span className="text-[11px] text-[#8A8F98] font-sans">({protectedCount}/{simulationData.length} SPs covered)</span>
           </div>
         </div>
       </div>
 
       {/* Dispatch Timeline Chart */}
-      <div className="bg-[#111113] border border-zinc-800/80 rounded-md overflow-hidden">
-        <div className="h-10 px-4 border-b border-zinc-800/80 flex items-center justify-between">
-          <span className="font-sans font-medium text-sm text-zinc-100 tracking-normal">
+      <div className="surface-card overflow-hidden">
+        <div className="h-11 px-5 border-b border-white/[0.06] flex items-center justify-between">
+          <span className="font-sans font-medium text-[13px] text-[#EDEDEF]">
             Dispatch Balance Timeline
           </span>
-          <span className="text-xs text-zinc-400 font-sans">
-            Delivery Day {targetDate} · Policy: <strong className="text-zinc-200">{riskPolicy.toUpperCase()}</strong> (+{policyBuffer} MW)
+          <span className="text-xs text-[#8A8F98] font-sans">
+            Delivery Day {targetDate} · Policy: <strong className="text-[#EDEDEF]">{riskPolicy.toUpperCase()}</strong> (+{policyBuffer} MW)
           </span>
         </div>
 
@@ -261,22 +276,29 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart
                 data={simulationData}
-                margin={{ top: 12, right: 36, left: 10, bottom: 26 }}
+                margin={{ top: 12, right: 36, left: -10, bottom: 26 }}
               >
-                <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" vertical={false} />
+                <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
                 <XAxis
                   dataKey="settlementPeriod"
-                  stroke="#52525B"
+                  stroke="#5E626A"
                   fontSize={10}
                   tickLine={false}
                   fontFamily="JetBrains Mono"
-                  label={{ value: 'Settlement Period (1 to 48)', position: 'insideBottom', offset: -10, fill: '#71717A', fontSize: 10, fontFamily: 'Inter, sans-serif' }}
+                  label={{
+                    value: 'Settlement Period (1 to 48)',
+                    position: 'insideBottom',
+                    offset: -10,
+                    fill: '#71717A',
+                    fontSize: 10,
+                    fontFamily: 'Inter, sans-serif',
+                  }}
                 />
                 <YAxis
-                  stroke="#52525B"
-                  fontSize={10}
+                  stroke="#5E626A"
+                  fontSize={11}
                   tickLine={false}
-                  tickFormatter={(val) => `${(val / 1000).toFixed(1)}k MW`}
+                  tickFormatter={(val) => (val === 0 ? '0' : `${Math.round(val / 1000)}k`)}
                   fontFamily="JetBrains Mono"
                 />
                 <Tooltip
@@ -284,29 +306,39 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                     if (!active || !payload || !payload.length) return null;
                     const d = payload[0].payload;
                     return (
-                      <div className="bg-[#111113] border border-zinc-700/80 p-3 rounded shadow-xl text-xs font-mono space-y-1">
-                        <div className="text-zinc-200 font-semibold font-sans border-b border-zinc-800 pb-1">
+                      <div className="bg-[#121316] border border-white/[0.12] p-3 rounded-lg shadow-xl text-xs font-mono space-y-1">
+                        <div className="text-[#EDEDEF] font-semibold font-sans border-b border-white/[0.08] pb-1">
                           {d.settlementDate} • SP {d.settlementPeriod} ({d.startTime?.split('T')[1]?.substring(0, 5)} UTC)
                         </div>
-                        <div className="text-zinc-400">Demand: {d.demand_mw.toLocaleString()} MW</div>
+                        <div className="text-[#8A8F98]">Demand: {d.demand_mw.toLocaleString()} MW</div>
                         <div className="text-emerald-400">Actual Wind: {d.actual_mw.toLocaleString()} MW</div>
                         <div className="text-amber-400">Procured Thermal: {d.thermal_procured_mw.toLocaleString()} MW</div>
                         <div className="text-sky-400">Total Generation: {d.total_generation_mw.toLocaleString()} MW</div>
-                        <div className={`pt-1 border-t border-zinc-800 font-semibold ${d.margin_mw >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        <div className={`pt-1 border-t border-white/[0.08] font-semibold ${d.margin_mw >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {d.margin_mw >= 0 ? `+${d.margin_mw} MW Surplus` : `${d.margin_mw} MW Shortfall`}
                         </div>
                       </div>
                     );
                   }}
                 />
-                <Legend verticalAlign="top" height={28} wrapperStyle={{ fontSize: '11px', fontFamily: 'Inter, sans-serif' }} />
+                <Legend
+                  verticalAlign="top"
+                  height={28}
+                  wrapperStyle={{ fontSize: '11px', fontFamily: 'Inter, sans-serif' }}
+                />
 
                 <ReferenceLine
                   y={demandMw}
                   stroke="#F59E0B"
                   strokeWidth={1.5}
                   strokeDasharray="4 4"
-                  label={{ value: `Demand: ${(demandMw/1000).toFixed(0)}k MW`, fill: '#F59E0B', fontSize: 10, position: 'insideTopRight', fontFamily: 'JetBrains Mono' }}
+                  label={{
+                    value: `Demand: ${(demandMw / 1000).toFixed(0)}k MW`,
+                    fill: '#F59E0B',
+                    fontSize: 10,
+                    position: 'insideTopRight',
+                    fontFamily: 'JetBrains Mono',
+                  }}
                 />
 
                 <Line
@@ -345,7 +377,7 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
       </div>
 
       {/* Methodology Compact Footer Note */}
-      <div className="text-center py-2 text-xs text-zinc-500 font-sans">
+      <div className="text-center py-2 text-xs text-[#6E737D] font-sans">
         D-1 11:00 UTC auction cutoff · Calibrated on 1,488 settlement periods (Jan 2026) · P95 hedge protects against balancing mechanism cash-out penalties
       </div>
     </div>

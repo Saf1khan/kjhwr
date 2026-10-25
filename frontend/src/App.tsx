@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Header } from './components/Header';
+import { Header, ContextualControlBar } from './components/Header';
 import { KpiBentoStrip } from './components/KpiBentoStrip';
 import { TradingViewTab } from './components/tabs/TradingViewTab';
 import { RiskAnalyticsTab } from './components/tabs/RiskAnalyticsTab';
@@ -84,24 +84,27 @@ export const App: React.FC = () => {
   }, [loadDashboardData]);
 
   return (
-    <div className="min-h-screen bg-[#09090B] text-zinc-100 flex flex-col font-sans selection:bg-zinc-800 selection:text-white">
-      {/* 2-Tier Header */}
+    <div className="min-h-screen bg-[#08090A] text-[#EDEDEF] flex flex-col font-sans selection:bg-zinc-800 selection:text-white">
+      {/* Top Single-Tier Navigation Bar */}
       <Header
-        startDate={startDate}
-        endDate={endDate}
-        cutoffHour={cutoffHour}
-        interpolation={interpolation}
         activeTab={activeTab}
         isHealthy={healthData?.status === 'healthy'}
-        onStartDateChange={setStartDate}
-        onEndDateChange={setEndDate}
-        onCutoffHourChange={setCutoffHour}
-        onInterpolationChange={setInterpolation}
         onTabChange={setActiveTab}
       />
 
       {/* Main Workspace Container */}
-      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 lg:px-6 py-5 space-y-4">
+      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 lg:px-6 py-4 space-y-4">
+        {/* Contextual Control Bar (In-page above KPIs) */}
+        <ContextualControlBar
+          startDate={startDate}
+          endDate={endDate}
+          cutoffHour={cutoffHour}
+          interpolation={interpolation}
+          onStartDateChange={setStartDate}
+          onEndDateChange={setEndDate}
+          onCutoffHourChange={setCutoffHour}
+          onInterpolationChange={setInterpolation}
+        />
         {/* Error Banner */}
         {error && (
           <div className="bg-rose-950/60 border border-rose-800 text-rose-200 p-3.5 rounded flex items-center justify-between text-xs font-mono">
@@ -164,18 +167,18 @@ export const App: React.FC = () => {
       </main>
 
       {/* Terminal Footer */}
-      <footer className="border-t border-zinc-800/80 bg-[#09090B] py-3.5 text-xs font-sans text-zinc-500 mt-auto">
+      <footer className="border-t border-white/[0.06] bg-[#08090A] py-3.5 text-xs font-sans text-[#8A8F98] mt-auto">
         <div className="max-w-[1400px] mx-auto px-4 lg:px-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-zinc-300">GridPulse</span>
-            <span>·</span>
+            <span className="font-medium text-[#EDEDEF]">GridPulse</span>
+            <span className="text-[#5E626A]">·</span>
             <span>UK Day-Ahead Wind & Thermal Desk</span>
-            <span>·</span>
-            <span className="font-mono text-zinc-400 text-[11px]">1,488 settlement intervals</span>
+            <span className="text-[#5E626A]">·</span>
+            <span className="font-mono text-[#6E737D] text-[11px]">1,488 settlement intervals</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-[#8A8F98]">
             <span>Elexon BMRS Stream</span>
-            <span>·</span>
+            <span className="text-[#5E626A]">·</span>
             <span>January 2026</span>
           </div>
         </div>

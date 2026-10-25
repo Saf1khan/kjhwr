@@ -185,4 +185,18 @@ kjhwr-energy-pilot/
     - In `TradingViewTab.tsx`: Toned down deficit/surplus imbalance bars to soft muted slate (`#3F3F46`) and soft amber (`#F59E0B` at `0.75`).
   - [x] Streamlined `SimulatorTab.tsx`: Removed `1.`, `2.`, `3.`, `4.` numbering from policy buttons (`Naive Forecast`, `Bias-Adjusted`, `P90 Buffer`, `P95 Buffer (Recommended)`), unified outcome summary metrics in crisp white (`#FAFAFA`), and condensed the wordy 3-column methodology card into a clean 1-line muted footer note.
   - [x] Verified zero TypeScript or build errors (`npm run build` passed cleanly in 18.2s).
+- [x] **Phase 6: Linear, Fey & Vercel Design Engineering Elevation**
+  - [x] Typography system (`.metric-value` in `index.css`): Inter with OpenType tabular numerals (`tnum`, `zero`, `cv01`, `-0.03em` tracking) for large KPI numbers; reserved `JetBrains Mono` strictly for ticks, UTC timestamps, and table cells.
+  - [x] 4-Tier neutral carbon surface hierarchy: Canvas `#08090A`, recessed well `#0C0D0F`, `.surface-card` gradient with hairline micro-contrast border and inset rim light, and `.surface-button`.
+  - [x] Single-tier Top Navigation Bar (`Header.tsx`): 16px geometric pulse/grid logo, `GridPulse / UK Day-Ahead Desk`, quiet live indicator, and Vercel-style recessed segmented tab switcher.
+  - [x] In-page Contextual Control Bar: Segmented presets (`Full Month · Jan 2026`, `Week 1–4`) with custom date picker hidden behind clean `Custom` pill toggle, avoiding raw browser input clutter in default view.
+  - [x] Architectural 4-tile KPI Strip (`KpiBentoStrip.tsx`): Discrete `.surface-card` tiles, `.metric-value` 28px typography, context tags, and 6px semantic indicator dots.
+  - [x] Chart precision engineering:
+    - Fixed Y-axis label wrapping across all charts: Formatted as clean single-line numbers (`20k`, `15k`, etc.) and stated `(MW)` once in subtitles.
+    - `TradingViewTab.tsx`: Custom pill toggle buttons for Intraday & P95 Buffer (replacing native checkboxes); 1.5px actual generation stroke with vertical gradient fill.
+    - `RiskAnalyticsTab.tsx`: Slender architectural histogram bars (`maxBarSize={28}`, `barCategoryGap="18%"`) with vertical SVG gradients and rounded caps; horizon chart with subtle area fills and visible node dots.
+    - `SimulatorTab.tsx`: Policy selection cards styled as `.surface-card` radio tiles with active indicator dots and single-line Y-axis ticks.
+  - [x] Verified zero TypeScript or build errors (`tsc && vite build` in 14.38s).
+  - [x] Verified in browser with full visual regression testing across all 3 tabs.
+
 
