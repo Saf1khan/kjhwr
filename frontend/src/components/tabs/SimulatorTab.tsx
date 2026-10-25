@@ -262,13 +262,21 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
 
       {/* Dispatch Timeline Chart */}
       <div className="surface-card overflow-hidden">
-        <div className="h-11 px-5 border-b border-white/[0.06] flex items-center justify-between">
-          <span className="font-sans font-medium text-[13px] text-[#EDEDEF]">
-            Dispatch Balance Timeline
-          </span>
-          <span className="text-xs text-[#8A8F98] font-sans">
-            Delivery Day {targetDate} · Policy: <strong className="text-[#EDEDEF]">{riskPolicy.toUpperCase()}</strong> (+{policyBuffer} MW)
-          </span>
+        <div className="h-11 px-5 border-b border-white/[0.06] flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-3">
+            <span className="font-sans font-medium text-[13px] text-[#EDEDEF]">
+              Dispatch Balance Timeline
+            </span>
+            <span className="text-[#5E626A]">·</span>
+            <span className="text-xs text-[#8A8F98] font-sans">
+              Delivery Day {targetDate} · Policy: <strong className="text-[#EDEDEF]">{riskPolicy.toUpperCase()}</strong> (+{policyBuffer} MW)
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[11px] font-sans text-amber-400">
+            <span className="w-3 h-0 border-b border-dashed border-amber-400 inline-block" />
+            <span>System Demand ({demandMw.toLocaleString()} MW)</span>
+          </div>
         </div>
 
         <div className="p-4 pt-2">
@@ -332,13 +340,6 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                   stroke="#F59E0B"
                   strokeWidth={1.5}
                   strokeDasharray="4 4"
-                  label={{
-                    value: `Demand: ${(demandMw / 1000).toFixed(0)}k MW`,
-                    fill: '#F59E0B',
-                    fontSize: 10,
-                    position: 'insideTopRight',
-                    fontFamily: 'JetBrains Mono',
-                  }}
                 />
 
                 <Line

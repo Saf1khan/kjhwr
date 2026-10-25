@@ -194,7 +194,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart
                 data={timeseries}
-                margin={{ top: 12, right: 15, left: -10, bottom: 0 }}
+                margin={{ top: 8, right: 24, left: 0, bottom: 4 }}
               >
                 <defs>
                   <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
@@ -210,6 +210,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                   fontSize={10}
                   tickLine={false}
                   minTickGap={45}
+                  padding={{ left: 12, right: 24 }}
                   fontFamily="JetBrains Mono"
                 />
                 <YAxis
@@ -259,14 +260,14 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                   />
                 )}
 
-                {/* Brush for zooming */}
+                {/* Dark timeline scrubber */}
                 <Brush
                   dataKey="startTime"
-                  height={22}
-                  stroke="#38BDF8"
-                  fill="#0C0D0F"
-                  tickFormatter={formatXAxis}
+                  height={20}
+                  stroke="rgba(255,255,255,0.12)"
+                  fill="#090A0D"
                   travellerWidth={8}
+                  tickFormatter={() => ""}
                 />
               </ComposedChart>
             </ResponsiveContainer>
@@ -304,7 +305,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart
                 data={timeseries}
-                margin={{ top: 8, right: 15, left: -10, bottom: 0 }}
+                margin={{ top: 8, right: 24, left: 0, bottom: 4 }}
               >
                 <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
                 <XAxis
@@ -314,6 +315,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                   fontSize={10}
                   tickLine={false}
                   minTickGap={45}
+                  padding={{ left: 12, right: 24 }}
                   fontFamily="JetBrains Mono"
                 />
                 <YAxis

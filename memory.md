@@ -198,5 +198,19 @@ kjhwr-energy-pilot/
     - `SimulatorTab.tsx`: Policy selection cards styled as `.surface-card` radio tiles with active indicator dots and single-line Y-axis ticks.
   - [x] Verified zero TypeScript or build errors (`tsc && vite build` in 14.38s).
   - [x] Verified in browser with full visual regression testing across all 3 tabs.
+- [x] **Phase 7: Definitive Architectural Interaction Polish & Framer-Motion**
+  - [x] Installed `framer-motion` for spring-physics tab switching, preset navigation, and smooth workspace transitions.
+  - [x] Unified Architectural Frame: Fused the KPI summary and active workspace into one unified outer container (`rounded-xl border border-white/[0.08] bg-[#0B0C0F] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.7)] overflow-hidden`).
+  - [x] Flush 4-column Structural Ledger (`KpiBentoStrip.tsx`): Replaced floating cards with a hairline-divided ledger (`divide-x divide-white/[0.07] border-b border-white/[0.08] bg-[#0E1015]`) and created `<AnimatedNumber>` helper for 300ms smooth tweening on date/cutoff changes.
+  - [x] Fixed Preset Selection & Custom Date Popover: Atomic state handler `handleDateRangeChange(start, end, preset)` with `<motion.div layoutId="activePresetPill">`, and anchored floating custom popover (`absolute top-full left-0 mt-2 z-50 w-72 p-4 rounded-xl bg-[#13151C] border border-white/[0.12]`) with click-outside listener to prevent layout shift.
+  - [x] Redesigned Top Header: Bespoke geometric parallel vector bars in electric cyan & emerald green, `GridPulse`, `GB · BMRS` badge, and recessed tab dock with spring `<motion.div layoutId="workspaceTabPill">`.
+  - [x] Resolved 3 Production Chart Glitches:
+    - Dark timeline `<Brush>` scrubber (`fill="#090A0D"` with hairline border).
+    - Added `padding={{ left: 12, right: 24 }}` and margins on time-series charts to prevent `31 Jan 23:30` cutoff.
+    - Moved `System Demand ({demandMw} MW)` to Dispatch Balance chart header, removing text collision on reference line.
+  - [x] Custom SVG Favicon: Added `frontend/public/favicon.svg` and updated `index.html` title to `GridPulse — GB Day-Ahead Wind & Thermal Desk`.
+  - [x] Verified zero TypeScript or build errors (`tsc && vite build` in 22.1s).
+  - [x] Verified in browser with subagent interaction testing across presets, popovers, and tabs.
+
 
 

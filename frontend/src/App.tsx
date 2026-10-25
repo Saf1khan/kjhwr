@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Header, ContextualControlBar } from './components/Header';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Header, ContextualControlBar, PresetType } from './components/Header';
 import { KpiBentoStrip } from './components/KpiBentoStrip';
 import { TradingViewTab } from './components/tabs/TradingViewTab';
 import { RiskAnalyticsTab } from './components/tabs/RiskAnalyticsTab';
@@ -22,6 +23,7 @@ export const App: React.FC = () => {
   // Global Filters State
   const [startDate, setStartDate] = useState<string>('2026-01-01');
   const [endDate, setEndDate] = useState<string>('2026-01-31');
+  const [activePreset, setActivePreset] = useState<PresetType>('full');
   const [cutoffHour, setCutoffHour] = useState<number>(11);
   const [interpolation, setInterpolation] = useState<'step' | 'linear'>('step');
   const [activeTab, setActiveTab] = useState<'trading' | 'analytics' | 'simulator'>('trading');
@@ -34,6 +36,16 @@ export const App: React.FC = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Atomic date range update handler to eliminate preset race conditions
+  const handleDateRangeChange = useCallback(
+    (start: string, end: string, preset: PresetType) => {
+      setStartDate(start);
+      setEndDate(end);
+      setActivePreset(preset);
+    },
+    []
+  );
 
   // Check health on load
   useEffect(() => {
@@ -94,17 +106,18 @@ export const App: React.FC = () => {
 
       {/* Main Workspace Container */}
       <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 lg:px-6 py-4 space-y-4">
-        {/* Contextual Control Bar (In-page above KPIs) */}
+        {/* Contextual Control Bar */}
         <ContextualControlBar
           startDate={startDate}
           endDate={endDate}
+          activePreset={activePreset}
           cutoffHour={cutoffHour}
           interpolation={interpolation}
-          onStartDateChange={setStartDate}
-          onEndDateChange={setEndDate}
+          onDateRangeChange={handleDateRangeChange}
           onCutoffHourChange={setCutoffHour}
           onInterpolationChange={setInterpolation}
         />
+
         {/* Error Banner */}
         {error && (
           <div className="bg-rose-950/60 border border-rose-800 text-rose-200 p-3.5 rounded flex items-center justify-between text-xs font-mono">
@@ -122,48 +135,63 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* Executive Hairline KPI Bento Strip */}
-        <KpiBentoStrip
-          kpi={summaryData?.kpi || null}
-          cutoffHour={cutoffHour}
-        />
+        {/* Unified Architectural Frame (KPI Ledger + Active Workspace fused together) */}
+        <div className="rounded-xl border border-white/[0.08] bg-[#0B0C0F] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.7)] overflow-hidden">
+          {/* Flush 4-column Structural KPI Ledger */}
+          <KpiBentoStrip
+            kpi={summaryData?.kpi || null}
+            cutoffHour={cutoffHour}
+          />
 
-        {/* Active Tab Workspace */}
-        {loading && !timeseriesData ? (
-          <div className="bg-[#111113] border border-zinc-800 p-20 rounded-md flex flex-col items-center justify-center gap-3 text-zinc-400 font-sans text-xs">
-            <RefreshCw className="w-5 h-5 text-zinc-400 animate-spin" />
-            <div className="font-medium text-zinc-300">Computing Day-Ahead D-1 time-series alignment...</div>
-            <div className="text-[11px] text-zinc-500">Querying Elexon BMRS dataset engine</div>
+          {/* Active Tab Workspace with Smooth Spring/Opacity Transition */}
+          <div className="p-4 sm:p-5">
+            {loading && !timeseriesData ? (
+              <div className="p-20 flex flex-col items-center justify-center gap-3 text-zinc-400 font-sans text-xs">
+                <RefreshCw className="w-5 h-5 text-zinc-400 animate-spin" />
+                <div className="font-medium text-zinc-300">
+                  Computing Day-Ahead D-1 time-series alignment...
+                </div>
+                <div className="text-[11px] text-zinc-500">Querying Elexon BMRS dataset engine</div>
+              </div>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  {activeTab === 'trading' && timeseriesData && (
+                    <TradingViewTab
+                      timeseries={timeseriesData.timeseries}
+                      p95Buffer={timeseriesData.p95_shortfall_mw}
+                      cutoffHour={cutoffHour}
+                    />
+                  )}
+
+                  {activeTab === 'analytics' && summaryData && horizonData && (
+                    <RiskAnalyticsTab
+                      histogram={summaryData.histogram}
+                      daily={summaryData.daily}
+                      horizonDegradation={horizonData.horizon_degradation}
+                      diurnalProfile={horizonData.diurnal_profile}
+                      kpi={summaryData.kpi}
+                    />
+                  )}
+
+                  {activeTab === 'simulator' && timeseriesData && (
+                    <SimulatorTab
+                      timeseries={timeseriesData.timeseries}
+                      kpi={summaryData?.kpi || null}
+                      cutoffHour={cutoffHour}
+                    />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            )}
           </div>
-        ) : (
-          <div>
-            {activeTab === 'trading' && timeseriesData && (
-              <TradingViewTab
-                timeseries={timeseriesData.timeseries}
-                p95Buffer={timeseriesData.p95_shortfall_mw}
-                cutoffHour={cutoffHour}
-              />
-            )}
-
-            {activeTab === 'analytics' && summaryData && horizonData && (
-              <RiskAnalyticsTab
-                histogram={summaryData.histogram}
-                daily={summaryData.daily}
-                horizonDegradation={horizonData.horizon_degradation}
-                diurnalProfile={horizonData.diurnal_profile}
-                kpi={summaryData.kpi}
-              />
-            )}
-
-            {activeTab === 'simulator' && timeseriesData && (
-              <SimulatorTab
-                timeseries={timeseriesData.timeseries}
-                kpi={summaryData?.kpi || null}
-                cutoffHour={cutoffHour}
-              />
-            )}
-          </div>
-        )}
+        </div>
       </main>
 
       {/* Terminal Footer */}
