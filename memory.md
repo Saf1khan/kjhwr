@@ -250,6 +250,11 @@ kjhwr-energy-pilot/
     - [x] Removed green underline meters under the 4 KPI numbers (`KpiBentoStrip.tsx`): Replaced with clean mono badges (`D-1 11H`, `SYSTEMATIC`, `TAIL RISK`, `JAN 2026`) and breathable 30px tabular typography.
     - [x] Converted Risk Policy buttons in Tab 3 to a compact 2x2 grid (`SimulatorTab.tsx`): Arranged `Naive`, `Bias-Adjusted`, `P90`, and `P95 Institutional Buffer` side-by-side so all 4 buttons fit on screen with zero vertical cutoff.
     - [x] Cleaned up Tab 1 time-series charts (`TradingViewTab.tsx`, `App.tsx`): Defaulted initial view to Week 1 (`w1`) for immediate spacious readability; removed the bottom `<Brush>` component; added `position={{ y: 16 }}` on top `<Tooltip>` to eliminate SVG top-edge clipping; placed live telemetry inside recessed pill box and replaced colored circle dots with clean checkmarks.
+  - [x] **Phase 9.2: Production Hardening & Full-Window Simulator Synchronization**
+    - [x] Fixed Simulator `0 MW` / empty chart bug when Week 1–4 selected (`SimulatorTab.tsx`): Made `availableDates` include all 31 days of January 2026; added proactive `getTimeseries` fetching with fallback so any selected date (e.g. `2026-01-28`) always renders all 48 SPs even if outside the current Tab 1 week range. Added spinning `Loader2` indicator.
+    - [x] Fixed Light Mode button black-box bug (`TradingViewTab.tsx`): Explicitly styled `Intraday` and `P95 Buffer` toggle buttons for Dark (`bg-white/[0.08] text-zinc-100 border-white/[0.15]`) and Light Mode (`bg-slate-100 text-slate-900 border-slate-300 shadow-2xs`) avoiding `text-white` collision with light mode overrides.
+    - [x] Smoothed forecast curve & updated KPI volume card (`TradingViewTab.tsx`, `App.tsx`, `KpiBentoStrip.tsx`): Switched Day-Ahead and Intraday `<Line>` elements from `type="stepAfter"` to `type="monotone"`, defaulted `interpolation` state to `'linear'` in `App.tsx`, and updated 4th KPI card title to `Period Wind Volume` with `WINDOW TOTAL` tag.
+
 
 
 

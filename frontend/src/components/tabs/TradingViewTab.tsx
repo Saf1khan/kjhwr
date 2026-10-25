@@ -260,13 +260,13 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
             type="button"
             onClick={() => setShowLatest(!showLatest)}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all border ${
-              showLatest
-                ? isLight
-                  ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
-                  : 'bg-white/10 border-white/20 text-[#EDEDEF]'
-                : isLight
-                ? 'bg-white border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300'
-                : 'bg-[#0C0D0F] border-white/[0.05] text-[#5E626A] hover:text-[#8A8F98]'
+              isLight
+                ? showLatest
+                  ? 'bg-slate-100 text-slate-900 border-slate-300 shadow-2xs'
+                  : 'bg-white text-slate-400 border-slate-200 hover:text-slate-700 hover:border-slate-300'
+                : showLatest
+                ? 'bg-white/[0.08] text-zinc-100 border-white/[0.15]'
+                : 'bg-transparent text-zinc-500 border-white/[0.06] hover:text-zinc-300 hover:border-white/[0.1]'
             }`}
           >
             {showLatest && <Check className="w-3 h-3 text-current" />}
@@ -277,13 +277,13 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
             type="button"
             onClick={() => setShowBufferLine(!showBufferLine)}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all border ${
-              showBufferLine
-                ? isLight
-                  ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
-                  : 'bg-white/10 border-white/20 text-[#EDEDEF]'
-                : isLight
-                ? 'bg-white border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300'
-                : 'bg-[#0C0D0F] border-white/[0.05] text-[#5E626A] hover:text-[#8A8F98]'
+              isLight
+                ? showBufferLine
+                  ? 'bg-slate-100 text-slate-900 border-slate-300 shadow-2xs'
+                  : 'bg-white text-slate-400 border-slate-200 hover:text-slate-700 hover:border-slate-300'
+                : showBufferLine
+                ? 'bg-white/[0.08] text-zinc-100 border-white/[0.15]'
+                : 'bg-transparent text-zinc-500 border-white/[0.06] hover:text-zinc-300 hover:border-white/[0.1]'
             }`}
           >
             {showBufferLine && <Check className="w-3 h-3 text-current" />}
@@ -342,9 +342,9 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                 isAnimationActive={false}
               />
 
-              {/* Day-Ahead Forecast Line */}
+              {/* Day-Ahead Forecast Line (Smooth Monotone Flow) */}
               <Line
-                type="stepAfter"
+                type="monotone"
                 dataKey="day_ahead_forecast_mw"
                 name="Day-Ahead Forecast"
                 stroke={forecastColor}
@@ -353,10 +353,10 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                 isAnimationActive={false}
               />
 
-              {/* Latest Intraday Line */}
+              {/* Latest Intraday Line (Smooth Monotone Flow) */}
               {showLatest && (
                 <Line
-                  type="stepAfter"
+                  type="monotone"
                   dataKey="latest_forecast_mw"
                   name="Latest Forecast"
                   stroke="#8A8F98"

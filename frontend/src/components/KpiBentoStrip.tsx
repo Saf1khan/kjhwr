@@ -137,12 +137,12 @@ export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi, cutoffHour })
         </div>
       </div>
 
-      {/* 4. Monthly Volume */}
+      {/* 4. Period Wind Volume */}
       <div className="px-6 py-4 transition-colors hover:bg-white/[0.015] flex flex-col justify-between">
         <div className="flex items-center justify-between">
-          <span className="text-[13px] font-medium text-zinc-300">Monthly Volume</span>
+          <span className="text-[13px] font-medium text-zinc-300">Period Wind Volume</span>
           <span className="px-1.5 py-0.5 rounded text-[10px] font-mono border border-white/[0.08] bg-white/[0.03] text-zinc-400">
-            JAN 2026
+            WINDOW TOTAL
           </span>
         </div>
         <div className="my-2 flex items-baseline">

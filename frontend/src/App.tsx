@@ -25,7 +25,7 @@ export const App: React.FC = () => {
   const [endDate, setEndDate] = useState<string>('2026-01-07');
   const [activePreset, setActivePreset] = useState<PresetType>('w1');
   const [cutoffHour, setCutoffHour] = useState<number>(11);
-  const [interpolation, setInterpolation] = useState<'step' | 'linear'>('step');
+  const [interpolation, setInterpolation] = useState<'step' | 'linear'>('linear');
   const [activeTab, setActiveTab] = useState<'trading' | 'analytics' | 'simulator'>('trading');
   const [selectedSimulatorDate, setSelectedSimulatorDate] = useState<string>('2026-01-28');
 
