@@ -1,5 +1,8 @@
 # Project Memory & Architecture Blueprint
 
+- **Production Deployment:** [https://kjhwr-delta.vercel.app](https://kjhwr-delta.vercel.app)
+- **Repository URL:** [https://github.com/Saf1khan/kjhwr](https://github.com/Saf1khan/kjhwr)
+
 ## 1. Project Summary & Domain Context
 - **Client & Persona:** UK Energy Utility Day-Ahead Wholesale Trading Desk.
 - **Problem Statement:** To balance demand and determine thermal/non-renewable power procurement for delivery day $D$, traders must commit capital on decision day $D-1$ before gate closure. Accurately assessing day-ahead wind generation forecasts available at decision time and quantifying their forecast error bounds is critical to minimize imbalance penalty charges and avoid costly emergency power purchases.

@@ -1,6 +1,7 @@
 # GridPulse UK (`kjhwr`) // Wholesale Power Procurement Intelligence
 
-> **Production Deployment:** `https://kjhwr-energy-pilot.vercel.app` *(or your Vercel deployment URL)*
+> **Production Deployment:** [https://kjhwr-delta.vercel.app](https://kjhwr-delta.vercel.app)  
+> **Repository:** [https://github.com/Saf1khan/kjhwr](https://github.com/Saf1khan/kjhwr)
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)](https://react.dev/)
