@@ -20,10 +20,10 @@ import {
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export const App: React.FC = () => {
-  // Global Filters State
+  // Global Filters State (Defaulting to Week 1 for clean, readable initial rendering)
   const [startDate, setStartDate] = useState<string>('2026-01-01');
-  const [endDate, setEndDate] = useState<string>('2026-01-31');
-  const [activePreset, setActivePreset] = useState<PresetType>('full');
+  const [endDate, setEndDate] = useState<string>('2026-01-07');
+  const [activePreset, setActivePreset] = useState<PresetType>('w1');
   const [cutoffHour, setCutoffHour] = useState<number>(11);
   const [interpolation, setInterpolation] = useState<'step' | 'linear'>('step');
   const [activeTab, setActiveTab] = useState<'trading' | 'analytics' | 'simulator'>('trading');
@@ -197,7 +197,13 @@ export const App: React.FC = () => {
         )}
 
         {/* Unified Architectural Frame (KPI Ledger + Active Workspace fused together) */}
-        <div className="rounded-xl border border-white/[0.08] bg-[#0A0B0E] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.7)] overflow-hidden">
+        <div
+          className={`rounded-xl border transition-all overflow-hidden ${
+            theme === 'light'
+              ? 'border-[#E2E8F0] bg-white shadow-[0_1px_3px_rgba(15,23,42,0.06),0_8px_24px_-4px_rgba(15,23,42,0.04)]'
+              : 'border-white/[0.08] bg-[#0A0B0E] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.7)]'
+          }`}
+        >
           {/* Flush 4-column Structural KPI Ledger - hidden on simulator tab to prevent scrolling */}
           {activeTab !== 'simulator' && (
             <KpiBentoStrip

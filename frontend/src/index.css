@@ -20,7 +20,7 @@ html.light {
   /* Light Mode Palette — Warm Alabaster & Crisp Ink (Stripe / Vercel style) */
   --bg-canvas: #F6F8FA;
   --bg-surface: #FFFFFF;
-  --bg-elevated: #F1F5F9;
+  --bg-elevated: #F8FAFC;
   --border-subtle: #E2E8F0;
   --text-primary: #0F172A;
   --text-secondary: #475569;
@@ -114,16 +114,20 @@ html.light .surface-button {
 
 /* Light Mode Overrides for Structural Grid & Deep Utility Classes */
 html.light .bg-\[\#08090A\] { background-color: var(--bg-canvas) !important; }
-html.light .bg-\[\#0A0B0E\] { background-color: var(--bg-surface) !important; }
-html.light .bg-\[\#0B0C0F\] { background-color: var(--bg-surface) !important; }
-html.light .bg-\[\#0C0D12\] { background-color: var(--bg-elevated) !important; }
-html.light .bg-\[\#0E1015\] { background-color: var(--bg-elevated) !important; }
-html.light .bg-\[\#121316\] { background-color: var(--bg-surface) !important; }
+html.light .bg-\[\#0A0B0E\] { background-color: #FFFFFF !important; }
+html.light .bg-\[\#0B0C0F\] { background-color: #FFFFFF !important; }
+html.light .bg-\[\#0C0D12\],
+html.light .bg-\[\#0C0D12\]\/60 { background-color: #F8FAFC !important; }
+html.light .bg-\[\#0E1015\] { background-color: #F8FAFC !important; }
+html.light .bg-\[\#121316\] { background-color: #FFFFFF !important; }
 html.light .bg-\[\#0D0E12\] { background-color: #E2E8F0 !important; }
-html.light .bg-\[\#18191E\] { background-color: var(--bg-elevated) !important; }
+html.light .bg-\[\#18191E\] { background-color: #F1F5F9 !important; }
+html.light .bg-\[\#16171C\] { background-color: #F1F5F9 !important; }
 html.light .bg-\[\#1A1D24\] { background-color: #FFFFFF !important; }
 html.light .bg-\[\#13151C\] { background-color: #FFFFFF !important; }
 html.light .bg-\[\#0C0D0F\] { background-color: #F8FAFC !important; }
+html.light .bg-\[\#090A0D\] { background-color: #F1F5F9 !important; }
+html.light .bg-\[\#08090B\] { background-color: #F8FAFC !important; }
 
 /* Light Mode Borders & Dividers */
 html.light [class*="border-white\/"] { border-color: var(--border-subtle) !important; }
@@ -160,4 +164,14 @@ html.light footer {
   background-color: var(--bg-surface) !important;
   border-top-color: var(--border-subtle) !important;
 }
+
+html.light tbody tr:hover {
+  background-color: #F8FAFC !important;
+}
+
+html.light thead {
+  background-color: #F8FAFC !important;
+  border-bottom-color: var(--border-subtle) !important;
+}
+
 

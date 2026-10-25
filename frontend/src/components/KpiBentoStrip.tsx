@@ -81,25 +81,18 @@ export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi, cutoffHour })
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-white/[0.07] border-b border-white/[0.08] bg-[#0E1015]">
       {/* 1. Forecast Error (MAE) */}
-      <div className="px-6 py-5 transition-colors hover:bg-white/[0.015] flex flex-col justify-between">
-        <div className="flex items-center justify-between text-[12px]">
-          <span className="font-medium text-zinc-400">Forecast Error (MAE)</span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+      <div className="px-6 py-4 transition-colors hover:bg-white/[0.015] flex flex-col justify-between">
+        <div className="flex items-center justify-between">
+          <span className="text-[13px] font-medium text-zinc-300">Forecast Error (MAE)</span>
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono border border-white/[0.08] bg-white/[0.03] text-zinc-400">
             D-1 {cutoffHour}H
           </span>
         </div>
-        <div className="my-2.5 flex items-baseline">
-          <span className="font-sans tabular-nums tracking-[-0.03em] text-[28px] font-semibold text-[#F4F4F6] leading-none">
+        <div className="my-2 flex items-baseline">
+          <span className="font-sans tabular-nums tracking-[-0.03em] text-[30px] font-semibold text-[#F4F4F6] leading-none">
             <AnimatedNumber value={kpi.mae_mw} decimals={1} />
           </span>
           <span className="text-[13px] font-normal text-zinc-500 ml-1.5">MW</span>
-        </div>
-        {/* Subtle structural indicator rule */}
-        <div className="h-[2px] w-full bg-white/[0.06] rounded-full overflow-hidden mb-2">
-          <div
-            className="h-full bg-teal-500/80 rounded-full transition-all"
-            style={{ width: `${Math.min(100, Math.round((kpi.mae_mw / 3000) * 100))}%` }}
-          />
         </div>
         <div className="text-[12px] text-zinc-400 font-sans">
           {kpi.wape_percent.toFixed(1)}% WAPE · {kpi.latest_mae_mw.toLocaleString()} MW intraday
@@ -107,25 +100,18 @@ export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi, cutoffHour })
       </div>
 
       {/* 2. Forecast Bias (MBE) */}
-      <div className="px-6 py-5 transition-colors hover:bg-white/[0.015] flex flex-col justify-between">
-        <div className="flex items-center justify-between text-[12px]">
-          <span className="font-medium text-zinc-400">Forecast Bias (MBE)</span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+      <div className="px-6 py-4 transition-colors hover:bg-white/[0.015] flex flex-col justify-between">
+        <div className="flex items-center justify-between">
+          <span className="text-[13px] font-medium text-zinc-300">Forecast Bias (MBE)</span>
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono border border-white/[0.08] bg-white/[0.03] text-zinc-400">
             SYSTEMATIC
           </span>
         </div>
-        <div className="my-2.5 flex items-baseline">
-          <span className="font-sans tabular-nums tracking-[-0.03em] text-[28px] font-semibold text-[#F4F4F6] leading-none">
+        <div className="my-2 flex items-baseline">
+          <span className="font-sans tabular-nums tracking-[-0.03em] text-[30px] font-semibold text-[#F4F4F6] leading-none">
             <AnimatedNumber value={kpi.mbe_mw} decimals={1} prefix="+" />
           </span>
           <span className="text-[13px] font-normal text-zinc-500 ml-1.5">MW</span>
-        </div>
-        {/* Subtle structural indicator rule */}
-        <div className="h-[2px] w-full bg-white/[0.06] rounded-full overflow-hidden mb-2">
-          <div
-            className="h-full bg-teal-500/80 rounded-full transition-all"
-            style={{ width: `${Math.min(100, Math.round((kpi.mbe_mw / 2500) * 100))}%` }}
-          />
         </div>
         <div className="text-[12px] text-zinc-400 font-sans">
           Consistent over-forecast bias
@@ -133,25 +119,18 @@ export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi, cutoffHour })
       </div>
 
       {/* 3. P95 Thermal Buffer */}
-      <div className="px-6 py-5 transition-colors hover:bg-white/[0.015] flex flex-col justify-between">
-        <div className="flex items-center justify-between text-[12px]">
-          <span className="font-medium text-zinc-400">P95 Thermal Buffer</span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+      <div className="px-6 py-4 transition-colors hover:bg-white/[0.015] flex flex-col justify-between">
+        <div className="flex items-center justify-between">
+          <span className="text-[13px] font-medium text-zinc-300">P95 Thermal Buffer</span>
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono border border-white/[0.08] bg-white/[0.03] text-zinc-400">
             TAIL RISK
           </span>
         </div>
-        <div className="my-2.5 flex items-baseline">
-          <span className="font-sans tabular-nums tracking-[-0.03em] text-[28px] font-semibold text-[#F4F4F6] leading-none">
+        <div className="my-2 flex items-baseline">
+          <span className="font-sans tabular-nums tracking-[-0.03em] text-[30px] font-semibold text-[#F4F4F6] leading-none">
             <AnimatedNumber value={kpi.p95_shortfall_mw} decimals={1} />
           </span>
           <span className="text-[13px] font-normal text-zinc-500 ml-1.5">MW</span>
-        </div>
-        {/* Subtle structural indicator rule */}
-        <div className="h-[2px] w-full bg-white/[0.06] rounded-full overflow-hidden mb-2">
-          <div
-            className="h-full bg-teal-500/80 rounded-full transition-all"
-            style={{ width: `${Math.min(100, Math.round((kpi.p95_shortfall_mw / 7000) * 100))}%` }}
-          />
         </div>
         <div className="text-[12px] text-zinc-400 font-sans">
           P90: {kpi.p90_shortfall_mw.toLocaleString()} MW · Max: {kpi.max_shortfall_mw.toLocaleString()} MW
@@ -159,25 +138,18 @@ export const KpiBentoStrip: React.FC<KpiBentoStripProps> = ({ kpi, cutoffHour })
       </div>
 
       {/* 4. Monthly Volume */}
-      <div className="px-6 py-5 transition-colors hover:bg-white/[0.015] flex flex-col justify-between">
-        <div className="flex items-center justify-between text-[12px]">
-          <span className="font-medium text-zinc-400">Monthly Volume</span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+      <div className="px-6 py-4 transition-colors hover:bg-white/[0.015] flex flex-col justify-between">
+        <div className="flex items-center justify-between">
+          <span className="text-[13px] font-medium text-zinc-300">Monthly Volume</span>
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono border border-white/[0.08] bg-white/[0.03] text-zinc-400">
             JAN 2026
           </span>
         </div>
-        <div className="my-2.5 flex items-baseline">
-          <span className="font-sans tabular-nums tracking-[-0.03em] text-[28px] font-semibold text-[#F4F4F6] leading-none">
+        <div className="my-2 flex items-baseline">
+          <span className="font-sans tabular-nums tracking-[-0.03em] text-[30px] font-semibold text-[#F4F4F6] leading-none">
             <AnimatedNumber value={kpi.total_actual_gwh} decimals={1} />
           </span>
           <span className="text-[13px] font-normal text-zinc-500 ml-1.5">GWh</span>
-        </div>
-        {/* Subtle structural indicator rule */}
-        <div className="h-[2px] w-full bg-white/[0.06] rounded-full overflow-hidden mb-2">
-          <div
-            className="h-full bg-teal-500/80 rounded-full transition-all"
-            style={{ width: `${Math.min(100, Math.round((kpi.total_actual_gwh / 10000) * 100))}%` }}
-          />
         </div>
         <div className="text-[12px] text-zinc-400 font-sans">
           Fcst: {kpi.total_forecast_gwh.toLocaleString()} GWh (-{netDeficitGwh.toLocaleString()} GWh)

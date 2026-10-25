@@ -235,27 +235,35 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
               <div className="text-xs font-medium text-zinc-300 font-sans">
                 Risk Policy & Thermal Buffer:
               </div>
-              <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2.5">
                 {/* 1. Naive Forecast */}
                 <button
                   type="button"
                   onClick={() => setRiskPolicy('naive')}
-                  className={`w-full p-3 rounded-lg text-left transition-all border flex items-center justify-between ${
+                  className={`p-2.5 rounded-lg text-left transition-all border flex items-center justify-between ${
                     riskPolicy === 'naive'
-                      ? 'bg-sky-500/[0.08] border-sky-500/50 shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
-                      : 'bg-[#121316] border-white/[0.06] hover:border-white/[0.12] hover:bg-[#16171C]'
+                      ? isLight
+                        ? 'bg-sky-50 border-sky-400 shadow-sm'
+                        : 'bg-sky-500/[0.08] border-sky-500/50 shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
+                      : isLight
+                        ? 'bg-white border-slate-200 hover:border-slate-300'
+                        : 'bg-[#121316] border-white/[0.06] hover:border-white/[0.12] hover:bg-[#16171C]'
                   }`}
                 >
-                  <div className="space-y-0.5">
-                    <div className="text-xs font-medium text-[#EDEDEF]">Naive Forecast</div>
-                    <div className="text-[11px] text-[#8A8F98]">Trust raw wind · 0 MW buffer</div>
+                  <div className="space-y-0.5 min-w-0 pr-1">
+                    <div className={`text-xs font-medium truncate ${isLight ? 'text-slate-900' : 'text-[#EDEDEF]'}`}>
+                      Naive Forecast
+                    </div>
+                    <div className={`text-[10px] truncate ${isLight ? 'text-slate-500' : 'text-[#8A8F98]'}`}>
+                      0 MW buffer
+                    </div>
                   </div>
                   <div
-                    className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                      riskPolicy === 'naive' ? 'border-sky-400' : 'border-white/20'
+                    className={`w-3.5 h-3.5 flex-shrink-0 rounded-full border flex items-center justify-center ${
+                      riskPolicy === 'naive' ? 'border-sky-500' : (isLight ? 'border-slate-300' : 'border-white/20')
                     }`}
                   >
-                    {riskPolicy === 'naive' && <span className="w-2 h-2 rounded-full bg-sky-400" />}
+                    {riskPolicy === 'naive' && <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />}
                   </div>
                 </button>
 
@@ -263,24 +271,30 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                 <button
                   type="button"
                   onClick={() => setRiskPolicy('bias')}
-                  className={`w-full p-3 rounded-lg text-left transition-all border flex items-center justify-between ${
+                  className={`p-2.5 rounded-lg text-left transition-all border flex items-center justify-between ${
                     riskPolicy === 'bias'
-                      ? 'bg-sky-500/[0.08] border-sky-500/50 shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
-                      : 'bg-[#121316] border-white/[0.06] hover:border-white/[0.12] hover:bg-[#16171C]'
+                      ? isLight
+                        ? 'bg-sky-50 border-sky-400 shadow-sm'
+                        : 'bg-sky-500/[0.08] border-sky-500/50 shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
+                      : isLight
+                        ? 'bg-white border-slate-200 hover:border-slate-300'
+                        : 'bg-[#121316] border-white/[0.06] hover:border-white/[0.12] hover:bg-[#16171C]'
                   }`}
                 >
-                  <div className="space-y-0.5">
-                    <div className="text-xs font-medium text-[#EDEDEF]">Bias-Adjusted</div>
-                    <div className="text-[11px] text-[#8A8F98]">
-                      Subtract MBE · -{kpi?.mbe_mw || 1840} MW
+                  <div className="space-y-0.5 min-w-0 pr-1">
+                    <div className={`text-xs font-medium truncate ${isLight ? 'text-slate-900' : 'text-[#EDEDEF]'}`}>
+                      Bias-Adjusted
+                    </div>
+                    <div className={`text-[10px] truncate ${isLight ? 'text-slate-500' : 'text-[#8A8F98]'}`}>
+                      -{kpi?.mbe_mw || 1840} MW
                     </div>
                   </div>
                   <div
-                    className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                      riskPolicy === 'bias' ? 'border-sky-400' : 'border-white/20'
+                    className={`w-3.5 h-3.5 flex-shrink-0 rounded-full border flex items-center justify-center ${
+                      riskPolicy === 'bias' ? 'border-sky-500' : (isLight ? 'border-slate-300' : 'border-white/20')
                     }`}
                   >
-                    {riskPolicy === 'bias' && <span className="w-2 h-2 rounded-full bg-sky-400" />}
+                    {riskPolicy === 'bias' && <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />}
                   </div>
                 </button>
 
@@ -288,24 +302,30 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                 <button
                   type="button"
                   onClick={() => setRiskPolicy('p90')}
-                  className={`w-full p-3 rounded-lg text-left transition-all border flex items-center justify-between ${
+                  className={`p-2.5 rounded-lg text-left transition-all border flex items-center justify-between ${
                     riskPolicy === 'p90'
-                      ? 'bg-sky-500/[0.08] border-sky-500/50 shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
-                      : 'bg-[#121316] border-white/[0.06] hover:border-white/[0.12] hover:bg-[#16171C]'
+                      ? isLight
+                        ? 'bg-sky-50 border-sky-400 shadow-sm'
+                        : 'bg-sky-500/[0.08] border-sky-500/50 shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
+                      : isLight
+                        ? 'bg-white border-slate-200 hover:border-slate-300'
+                        : 'bg-[#121316] border-white/[0.06] hover:border-white/[0.12] hover:bg-[#16171C]'
                   }`}
                 >
-                  <div className="space-y-0.5">
-                    <div className="text-xs font-medium text-[#EDEDEF]">P90 Buffer</div>
-                    <div className="text-[11px] text-[#8A8F98]">
-                      +{kpi?.p90_shortfall_mw || 4347} MW buffer
+                  <div className="space-y-0.5 min-w-0 pr-1">
+                    <div className={`text-xs font-medium truncate ${isLight ? 'text-slate-900' : 'text-[#EDEDEF]'}`}>
+                      P90 Buffer
+                    </div>
+                    <div className={`text-[10px] truncate ${isLight ? 'text-slate-500' : 'text-[#8A8F98]'}`}>
+                      +{kpi?.p90_shortfall_mw || 4347} MW
                     </div>
                   </div>
                   <div
-                    className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                      riskPolicy === 'p90' ? 'border-sky-400' : 'border-white/20'
+                    className={`w-3.5 h-3.5 flex-shrink-0 rounded-full border flex items-center justify-center ${
+                      riskPolicy === 'p90' ? 'border-sky-500' : (isLight ? 'border-slate-300' : 'border-white/20')
                     }`}
                   >
-                    {riskPolicy === 'p90' && <span className="w-2 h-2 rounded-full bg-sky-400" />}
+                    {riskPolicy === 'p90' && <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />}
                   </div>
                 </button>
 
@@ -313,24 +333,30 @@ export const SimulatorTab: React.FC<SimulatorTabProps> = ({
                 <button
                   type="button"
                   onClick={() => setRiskPolicy('p95')}
-                  className={`w-full p-3 rounded-lg text-left transition-all border flex items-center justify-between ${
+                  className={`p-2.5 rounded-lg text-left transition-all border flex items-center justify-between ${
                     riskPolicy === 'p95'
-                      ? 'bg-sky-500/[0.08] border-sky-500/50 shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
-                      : 'bg-[#121316] border-white/[0.06] hover:border-white/[0.12] hover:bg-[#16171C]'
+                      ? isLight
+                        ? 'bg-sky-50 border-sky-400 shadow-sm'
+                        : 'bg-sky-500/[0.08] border-sky-500/50 shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]'
+                      : isLight
+                        ? 'bg-white border-slate-200 hover:border-slate-300'
+                        : 'bg-[#121316] border-white/[0.06] hover:border-white/[0.12] hover:bg-[#16171C]'
                   }`}
                 >
-                  <div className="space-y-0.5">
-                    <div className="text-xs font-medium text-[#EDEDEF]">P95 Institutional Buffer</div>
-                    <div className="text-[11px] text-sky-400 font-medium">
-                      +{kpi?.p95_shortfall_mw || 5378} MW buffer
+                  <div className="space-y-0.5 min-w-0 pr-1">
+                    <div className={`text-xs font-medium truncate ${isLight ? 'text-slate-900' : 'text-[#EDEDEF]'}`}>
+                      P95 Buffer
+                    </div>
+                    <div className={`text-[10px] truncate font-medium ${isLight ? 'text-sky-600' : 'text-sky-400'}`}>
+                      +{kpi?.p95_shortfall_mw || 5378} MW
                     </div>
                   </div>
                   <div
-                    className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                      riskPolicy === 'p95' ? 'border-sky-400' : 'border-white/20'
+                    className={`w-3.5 h-3.5 flex-shrink-0 rounded-full border flex items-center justify-center ${
+                      riskPolicy === 'p95' ? 'border-sky-500' : (isLight ? 'border-slate-300' : 'border-white/20')
                     }`}
                   >
-                    {riskPolicy === 'p95' && <span className="w-2 h-2 rounded-full bg-sky-400" />}
+                    {riskPolicy === 'p95' && <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />}
                   </div>
                 </button>
               </div>

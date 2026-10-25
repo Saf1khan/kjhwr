@@ -10,9 +10,9 @@ import {
   Tooltip,
   CartesianGrid,
   ReferenceLine,
-  Brush,
 } from 'recharts';
 import { TimeSeriesPoint } from '../../types/api';
+import { Check } from 'lucide-react';
 
 interface TradingViewTabProps {
   timeseries: TimeSeriesPoint[];
@@ -79,66 +79,98 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
     setHoveredPoint(null);
   };
 
-  // Custom Rich Tooltip (Clean, Editorial, No Clutter)
+  // Custom Rich Tooltip (Clean, Editorial, No Clutter, Light/Dark adaptive)
   const CustomTooltip = ({ active, payload }: any) => {
     if (!active || !payload || !payload.length) return null;
     const pt: TimeSeriesPoint = payload[0].payload;
     const isShortfall = pt.shortfall_mw > 0;
 
     return (
-      <div className="bg-[#121316] border border-white/[0.12] p-3 rounded-lg shadow-2xl text-xs font-mono max-w-xs space-y-2">
-        <div className="border-b border-white/[0.08] pb-1.5 flex items-center justify-between text-[11px]">
-          <span className="font-semibold text-[#EDEDEF]">
+      <div
+        className={`p-3 rounded-lg shadow-2xl text-xs font-mono max-w-xs space-y-2 ${
+          isLight
+            ? 'bg-white border border-slate-200 text-slate-800 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)]'
+            : 'bg-[#121316] border border-white/[0.12] text-zinc-200'
+        }`}
+      >
+        <div
+          className={`pb-1.5 flex items-center justify-between text-[11px] border-b ${
+            isLight ? 'border-slate-100' : 'border-white/[0.08]'
+          }`}
+        >
+          <span className={`font-semibold ${isLight ? 'text-slate-900' : 'text-[#EDEDEF]'}`}>
             {pt.settlementDate} · SP {pt.settlementPeriod}
           </span>
-          <span className="text-[#8A8F98]">
+          <span className={isLight ? 'text-slate-500' : 'text-[#8A8F98]'}>
             {formatXAxis(pt.startTime)} UTC
           </span>
         </div>
 
         <div className="space-y-1 text-[11px]">
           <div className="flex justify-between items-center">
-            <span className="text-emerald-400 flex items-center gap-1.5 font-sans">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="flex items-center gap-1.5 font-sans" style={{ color: actualColor }}>
+              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: actualColor }} />
               Actual Wind (FUELHH):
             </span>
-            <span className="text-[#F4F4F6] font-bold tabular-nums">{pt.actual_mw.toLocaleString()} MW</span>
+            <span className={`font-bold tabular-nums ${isLight ? 'text-slate-900' : 'text-[#F4F4F6]'}`}>
+              {pt.actual_mw.toLocaleString()} MW
+            </span>
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-sky-400 flex items-center gap-1.5 font-sans">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+            <span className="flex items-center gap-1.5 font-sans" style={{ color: forecastColor }}>
+              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: forecastColor }} />
               Day-Ahead (D-1 {cutoffHour}h):
             </span>
-            <span className="text-[#F4F4F6] font-bold tabular-nums">{pt.day_ahead_forecast_mw.toLocaleString()} MW</span>
+            <span className={`font-bold tabular-nums ${isLight ? 'text-slate-900' : 'text-[#F4F4F6]'}`}>
+              {pt.day_ahead_forecast_mw.toLocaleString()} MW
+            </span>
           </div>
 
           {showLatest && (
             <div className="flex justify-between items-center">
-              <span className="text-[#8A8F98] flex items-center gap-1.5 font-sans">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#8A8F98]" />
+              <span className={`flex items-center gap-1.5 font-sans ${isLight ? 'text-slate-500' : 'text-[#8A8F98]'}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${isLight ? 'bg-slate-400' : 'bg-[#8A8F98]'}`} />
                 Latest Forecast:
               </span>
-              <span className="text-zinc-300 tabular-nums">{pt.latest_forecast_mw.toLocaleString()} MW</span>
+              <span className={`tabular-nums ${isLight ? 'text-slate-700' : 'text-zinc-300'}`}>
+                {pt.latest_forecast_mw.toLocaleString()} MW
+              </span>
             </div>
           )}
 
-          <div className="border-t border-white/[0.08] pt-1.5 flex justify-between items-center font-sans">
-            <span className="text-[#8A8F98]">Imbalance (Fcst - Act):</span>
-            <span className={`font-mono font-bold ${isShortfall ? 'text-amber-400' : 'text-emerald-400'}`}>
+          <div
+            className={`pt-1.5 flex justify-between items-center font-sans border-t ${
+              isLight ? 'border-slate-100 text-slate-500' : 'border-white/[0.08] text-[#8A8F98]'
+            }`}
+          >
+            <span>Imbalance (Fcst - Act):</span>
+            <span
+              className={`font-mono font-bold ${
+                isShortfall ? (isLight ? 'text-amber-600' : 'text-amber-400') : (isLight ? 'text-emerald-600' : 'text-emerald-400')
+              }`}
+            >
               {pt.error_mw > 0 ? `+${pt.error_mw}` : pt.error_mw} MW
             </span>
           </div>
 
           {isShortfall && (
             <div className="flex items-center justify-between text-[11px] font-sans pt-0.5">
-              <span className="text-amber-400/90 font-medium">Thermal Deficit:</span>
-              <span className="text-amber-300 font-mono font-bold">+{pt.shortfall_mw} MW</span>
+              <span className={`font-medium ${isLight ? 'text-amber-600' : 'text-amber-400/90'}`}>
+                Thermal Deficit:
+              </span>
+              <span className={`font-mono font-bold ${isLight ? 'text-amber-600' : 'text-amber-300'}`}>
+                +{pt.shortfall_mw} MW
+              </span>
             </div>
           )}
         </div>
 
-        <div className="pt-1 border-t border-white/[0.08] text-[10px] text-[#5E626A] flex items-center justify-between">
+        <div
+          className={`pt-1 border-t text-[10px] flex items-center justify-between ${
+            isLight ? 'border-slate-100 text-slate-400' : 'border-white/[0.08] text-[#5E626A]'
+          }`}
+        >
           <span>Pub: {pt.day_ahead_publish_time?.split('T')[1]?.substring(0, 5)} UTC</span>
           <span>Lead: {pt.day_ahead_lead_time_hours}h</span>
         </div>
@@ -162,51 +194,63 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
         {/* Live Interactive Telemetry Strip */}
         <div className="flex items-center gap-4 text-xs font-mono">
           {hoveredPoint ? (
-            <>
-              <span className="text-zinc-400 hidden sm:inline">
+            <div
+              className={`flex items-center gap-3 px-2.5 py-1 rounded-md border ${
+                isLight ? 'bg-slate-100/80 border-slate-200' : 'bg-[#090A0D] border-white/[0.08]'
+              }`}
+            >
+              <span className={isLight ? 'text-slate-500 hidden sm:inline' : 'text-zinc-400 hidden sm:inline'}>
                 {formatXAxis(hoveredPoint.startTime)} UTC
               </span>
-              <span className="flex items-center gap-1.5 text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="flex items-center gap-1.5" style={{ color: actualColor }}>
                 Actual: {hoveredPoint.actual_mw.toLocaleString()} MW
               </span>
-              <span className="flex items-center gap-1.5 text-sky-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+              <span className="flex items-center gap-1.5" style={{ color: forecastColor }}>
                 DA: {hoveredPoint.day_ahead_forecast_mw.toLocaleString()} MW
               </span>
               <span
                 className={`flex items-center gap-1.5 ${
-                  hoveredPoint.error_mw > 0 ? 'text-amber-400' : 'text-zinc-400'
+                  hoveredPoint.error_mw > 0
+                    ? isLight
+                      ? 'text-amber-600'
+                      : 'text-amber-400'
+                    : isLight
+                    ? 'text-slate-500'
+                    : 'text-zinc-400'
                 }`}
               >
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    hoveredPoint.error_mw > 0 ? 'bg-amber-400' : 'bg-zinc-500'
-                  }`}
-                />
                 {hoveredPoint.error_mw > 0
                   ? `Shortfall: +${hoveredPoint.shortfall_mw.toLocaleString()} MW`
                   : `Surplus: ${Math.abs(hoveredPoint.error_mw).toLocaleString()} MW`}
               </span>
-            </>
+            </div>
           ) : (
-            <>
-              <span className="text-[#5E626A] font-sans text-[11px] uppercase tracking-wider hidden sm:inline">
+            <div
+              className={`flex items-center gap-3 px-2.5 py-1 rounded-md border ${
+                isLight ? 'bg-slate-100/80 border-slate-200' : 'bg-[#090A0D] border-white/[0.08]'
+              }`}
+            >
+              <span
+                className={`font-sans text-[11px] uppercase tracking-wider hidden sm:inline ${
+                  isLight ? 'text-slate-400' : 'text-[#5E626A]'
+                }`}
+              >
                 Period Avg:
               </span>
-              <span className="flex items-center gap-1.5 text-emerald-400/90">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/70" />
+              <span className="flex items-center gap-1.5" style={{ color: actualColor }}>
                 Actual: {averages.actual.toLocaleString()} MW
               </span>
-              <span className="flex items-center gap-1.5 text-sky-400/90">
-                <span className="w-1.5 h-1.5 rounded-full bg-sky-400/70" />
+              <span className="flex items-center gap-1.5" style={{ color: forecastColor }}>
                 DA: {averages.forecast.toLocaleString()} MW
               </span>
-              <span className="flex items-center gap-1.5 text-amber-400/90">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
+              <span
+                className={`flex items-center gap-1.5 ${
+                  isLight ? 'text-amber-600' : 'text-amber-400'
+                }`}
+              >
                 Deficit: +{averages.shortfall.toLocaleString()} MW
               </span>
-            </>
+            </div>
           )}
         </div>
 
@@ -215,34 +259,34 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
           <button
             type="button"
             onClick={() => setShowLatest(!showLatest)}
-            className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium transition-all border ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all border ${
               showLatest
-                ? 'bg-[#18191E] border-white/[0.12] text-[#EDEDEF]'
+                ? isLight
+                  ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
+                  : 'bg-white/10 border-white/20 text-[#EDEDEF]'
+                : isLight
+                ? 'bg-white border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300'
                 : 'bg-[#0C0D0F] border-white/[0.05] text-[#5E626A] hover:text-[#8A8F98]'
             }`}
           >
-            <span
-              className={`w-1.5 h-1.5 rounded-full transition-opacity ${
-                showLatest ? 'bg-[#8A8F98] opacity-100' : 'bg-[#5E626A] opacity-30'
-              }`}
-            />
+            {showLatest && <Check className="w-3 h-3 text-current" />}
             <span>Intraday</span>
           </button>
 
           <button
             type="button"
             onClick={() => setShowBufferLine(!showBufferLine)}
-            className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium transition-all border ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all border ${
               showBufferLine
-                ? 'bg-[#18191E] border-white/[0.12] text-[#EDEDEF]'
+                ? isLight
+                  ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
+                  : 'bg-white/10 border-white/20 text-[#EDEDEF]'
+                : isLight
+                ? 'bg-white border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300'
                 : 'bg-[#0C0D0F] border-white/[0.05] text-[#5E626A] hover:text-[#8A8F98]'
             }`}
           >
-            <span
-              className={`w-1.5 h-1.5 rounded-full transition-opacity ${
-                showBufferLine ? 'bg-[#F59E0B] opacity-100' : 'bg-[#F59E0B] opacity-30'
-              }`}
-            />
+            {showBufferLine && <Check className="w-3 h-3 text-current" />}
             <span>P95 Buffer</span>
           </button>
         </div>
@@ -284,7 +328,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                 domain={[0, 'auto']}
                 fontFamily="JetBrains Mono"
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip />} position={{ y: 16 }} />
 
               {/* Actual Wind Generation Area */}
               <Area
@@ -329,12 +373,12 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
 
       {/* 3. Synced Imbalance Track (height={145}, syncId="windMonitor", edge-to-edge hairline divider) */}
       <div className="border-t border-white/[0.07] bg-[#0A0B0E]">
-        <div className="h-9 px-6 border-b border-white/[0.05] flex items-center justify-between text-xs bg-[#0C0D12]/60">
+        <div className="h-9 px-6 border-b border-white/[0.05] flex items-center justify-between text-xs bg-[#0C0D12]">
           <div className="flex items-center gap-2">
             <span className="font-sans font-medium text-[12px] text-[#EDEDEF]">
               Forecast Error & Imbalance
             </span>
-            <span className="text-zinc-600">·</span>
+            <span className={isLight ? 'text-slate-400' : 'text-zinc-600'}>·</span>
             <span className="text-[11px] text-[#8A8F98] font-sans">
               Positive values indicate wind shortfalls (MW)
             </span>
@@ -346,7 +390,7 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
               Shortfall Deficit
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-[1px] bg-[#3F3F46]" />
+              <span className={`w-2 h-2 rounded-[1px] ${isLight ? 'bg-slate-400' : 'bg-[#3F3F46]'}`} />
               Surplus
             </span>
           </div>
@@ -418,16 +462,6 @@ export const TradingViewTab: React.FC<TradingViewTabProps> = ({
                       />
                     );
                   }}
-                />
-
-                {/* Theme-adaptive timeline scrubber */}
-                <Brush
-                  dataKey="startTime"
-                  height={20}
-                  stroke={isLight ? '#CBD5E1' : 'rgba(255,255,255,0.12)'}
-                  fill={isLight ? '#F1F5F9' : '#090A0D'}
-                  travellerWidth={8}
-                  tickFormatter={() => ""}
                 />
               </ComposedChart>
             </ResponsiveContainer>

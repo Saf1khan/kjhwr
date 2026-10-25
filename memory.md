@@ -245,6 +245,11 @@ kjhwr-energy-pilot/
     - **Native `<select>` Dropdowns (`Header.tsx` & `SimulatorTab.tsx`)**: Replaced raw browser `<select>` dropdowns for `Gate Cutoff` and `Delivery Date (D)` with custom Framer Motion `<AnimatePresence>` popover menus.
   - [x] Verified zero TypeScript or build errors (`npm run build` passed cleanly).
   - [x] Verified all features and interactions in local browser across dark & light modes.
+  - [x] **Phase 9.1: Definitive Visual Bug Fixes & Editorial Polish (Live Production)**
+    - [x] Fixed broken dark-gray header bars and muddy black container shadows in Light Mode (`index.css`, `App.tsx`): Set clean `#E2E8F0` border and soft elevation shadow; mapped all section headers to clean `#F8FAFC` alabaster background with deep `#0F172A` ink typography.
+    - [x] Removed green underline meters under the 4 KPI numbers (`KpiBentoStrip.tsx`): Replaced with clean mono badges (`D-1 11H`, `SYSTEMATIC`, `TAIL RISK`, `JAN 2026`) and breathable 30px tabular typography.
+    - [x] Converted Risk Policy buttons in Tab 3 to a compact 2x2 grid (`SimulatorTab.tsx`): Arranged `Naive`, `Bias-Adjusted`, `P90`, and `P95 Institutional Buffer` side-by-side so all 4 buttons fit on screen with zero vertical cutoff.
+    - [x] Cleaned up Tab 1 time-series charts (`TradingViewTab.tsx`, `App.tsx`): Defaulted initial view to Week 1 (`w1`) for immediate spacious readability; removed the bottom `<Brush>` component; added `position={{ y: 16 }}` on top `<Tooltip>` to eliminate SVG top-edge clipping; placed live telemetry inside recessed pill box and replaced colored circle dots with clean checkmarks.
 
 
 
